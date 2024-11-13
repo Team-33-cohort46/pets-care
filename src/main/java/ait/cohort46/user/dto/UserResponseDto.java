@@ -1,21 +1,19 @@
-package ait.cohort46.petscare.model;
+package ait.cohort46.user.dto;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+
+import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
-public class User {
-    @Id
-    private int user_id;
-    @Setter
+@Getter
+public class UserResponseDto {
+    private Long user_id;
     private String firstName;
-    @Setter
     private String lastName;
-    @Setter
     private String email;
-    @Setter
     private String password;
+    private Set<String> roles;
 }

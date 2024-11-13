@@ -1,5 +1,7 @@
-package ait.cohort46.petscare.model;
+package ait.cohort46.pet.model;
 
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,6 +13,7 @@ import lombok.Setter;
 @Getter
 public class Pet {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int pet_id;
     private int user_id;
     private String type;

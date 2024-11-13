@@ -1,10 +1,9 @@
-package ait.cohort46.petscare.dto;
+package ait.cohort46.user.dto;
 
 import lombok.Getter;
 
 @Getter
-public class UserDto {
-    private int user_id;
+public class UserRequestDto {
     private String firstName;
     private String lastName;
     private String email;

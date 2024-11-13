@@ -10,4 +10,10 @@ public interface UserService {
     Boolean deleteUser(Long user_id);
 
     UserResponseDto updateUser(Long user_id, UserEditDto userEditDto);
+
+    Boolean changePassword(Long user_id, String oldPassword, String newPassword);
+
+
+
+
 }

@@ -1,20 +1,35 @@
 package ait.cohort46.petscare.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.io.Serializable;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Service {
+@Builder
+@Entity
+public class Service implements Serializable {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    //todo user_id
+
+    //TODO user_id
+    @Column(nullable = false)
+    private Long user_id;
+
+    @Column(nullable = false)
     private String title;
+
     private String description;
+
+    @Column(nullable = false)
     private double price;
-    private String photo;
+
+    //private String photo;
+
+    @ManyToOne
     private ServiceCategory serviceCategory;
 }

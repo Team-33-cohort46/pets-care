@@ -7,9 +7,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class NewServiceDto {
+public class NewServiceCategoryDto {
     private String title;
-    private String description;
-    private Double price;
-    private Integer serviceCategoryId;
 }

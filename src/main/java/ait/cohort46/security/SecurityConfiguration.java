@@ -16,15 +16,14 @@ public class SecurityConfiguration {
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.httpBasic(Customizer.withDefaults());
-        http.csrf(csrf -> csrf.disable());
-        http.authorizeHttpRequests(authorize -> authorize
-                .requestMatchers(HttpMethod.POST, "/api/auth/register").permitAll()
-                .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/admin/services_category").permitAll()
+        http
+                .csrf(csrf -> csrf.disable())  // Отключение CSRF для упрощения тестирования
+                .authorizeHttpRequests(authorize -> authorize
+                        .anyRequest().permitAll()   // Разрешает доступ ко всем запросам без аутентификации
+                );
 
-                .anyRequest().authenticated());
         return http.build();
+
     }
 
     @Bean

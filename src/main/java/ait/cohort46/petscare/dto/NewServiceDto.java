@@ -11,5 +11,5 @@ public class NewServiceDto {
     private String title;
     private String description;
     private Double price;
-    private Integer serviceCategoryId;
+    private Integer serviceCategory;
 }

@@ -1,5 +1,6 @@
 package ait.cohort46.petscare.model;
 
+import ait.cohort46.user.model.User;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -16,9 +17,8 @@ public class Service implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    //TODO user_id
-    @Column(nullable = false)
-    private Long user_id;
+    @ManyToOne
+    private User user;
 
     @Column(nullable = false)
     private String title;
@@ -28,7 +28,7 @@ public class Service implements Serializable {
     @Column(nullable = false)
     private double price;
 
-    //private String photo;
+    private String photo;
 
     @ManyToOne
     private ServiceCategory serviceCategory;

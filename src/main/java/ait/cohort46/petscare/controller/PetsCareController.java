@@ -1,9 +1,6 @@
-package ait.cohort46.petscare.dto.controller;
+package ait.cohort46.petscare.controller;
 
-import ait.cohort46.petscare.dto.NewServiceCategoryDto;
-import ait.cohort46.petscare.dto.NewServiceDto;
-import ait.cohort46.petscare.dto.ServiceCategoryDTO;
-import ait.cohort46.petscare.dto.ServiceDTO;
+import ait.cohort46.petscare.dto.*;
 import ait.cohort46.petscare.service.PetsCareService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -29,8 +26,8 @@ public class PetsCareController {
     }
 
     @PatchMapping("/api/services/{service_id}")
-    public ServiceDTO updateService(@PathVariable Integer service_id, @RequestBody ServiceDTO serviceDto) {
-        return petsCareService.updateService(service_id, serviceDto);
+    public ServiceDTO updateService(@PathVariable Integer service_id, @RequestBody UpdateServiceDto updateServiceDto) {
+        return petsCareService.updateService(service_id, updateServiceDto);
     }
 
     @DeleteMapping("/api/services/{service_id}")

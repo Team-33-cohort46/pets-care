@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 @Entity
 public class User {
@@ -38,13 +39,13 @@ public class User {
     @Setter
     private String description;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
-    @Column(name = "roles")
-    private Set<String> roles = new HashSet<>();
-
-
-    public User() {
-        roles.add("USER");
-    }
+//    @ElementCollection(fetch = FetchType.EAGER)
+//    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
+//    @Column(name = "roles")
+//    private Set<String> roles = new HashSet<>();
+//
+//
+//    public User() {
+//        roles.add("USER");
+//    }
 }

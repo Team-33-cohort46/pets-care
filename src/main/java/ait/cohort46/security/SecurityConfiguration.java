@@ -19,8 +19,10 @@ public class SecurityConfiguration {
         http.httpBasic(Customizer.withDefaults());
         http.csrf(csrf -> csrf.disable());
         http.authorizeHttpRequests(authorize -> authorize
+                .requestMatchers(HttpMethod.POST, "/api/auth/register").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/admin/services_category").permitAll()
+
                 .anyRequest().authenticated());
         return http.build();
     }

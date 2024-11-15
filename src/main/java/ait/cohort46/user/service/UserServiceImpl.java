@@ -45,7 +45,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponseDto updateUser(Long user_id, UserEditDto userEditDto) {
-        return null;
+        User user = userRepository.findById(user_id).orElseThrow(UserExistsException::new);
+        if (userEditDto.getFirstName() != null) {
+            user.setFirstName(userEditDto.getFirstName());
+        }
+        if (userEditDto.getLastName() != null) {
+            user.setLastName(userEditDto.getLastName());
+        }
+        userRepository.save(user);
+        return modelMapper.map(user, UserResponseDto.class);
     }
 
     @Override

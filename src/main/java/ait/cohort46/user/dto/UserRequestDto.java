@@ -1,6 +1,5 @@
 package ait.cohort46.user.dto;
 
-import jakarta.persistence.Column;
 import lombok.Getter;
 
 @Getter

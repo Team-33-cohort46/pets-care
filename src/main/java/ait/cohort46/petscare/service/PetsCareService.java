@@ -1,9 +1,6 @@
 package ait.cohort46.petscare.service;
 
-import ait.cohort46.petscare.dto.NewServiceCategoryDto;
-import ait.cohort46.petscare.dto.NewServiceDto;
-import ait.cohort46.petscare.dto.ServiceCategoryDTO;
-import ait.cohort46.petscare.dto.ServiceDTO;
+import ait.cohort46.petscare.dto.*;
 
 
 public interface PetsCareService {
@@ -13,7 +10,7 @@ public interface PetsCareService {
 
     ServiceDTO addNewService(NewServiceDto newServiceDto);
 
-    ServiceDTO updateService(Integer id, ServiceDTO serviceDto);
+    ServiceDTO updateService(Integer id, UpdateServiceDto updateServiceDto);
 
     ServiceDTO deleteService(Integer id);
 }

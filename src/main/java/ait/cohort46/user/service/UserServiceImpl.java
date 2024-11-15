@@ -6,6 +6,7 @@ import ait.cohort46.user.dto.UserRequestDto;
 import ait.cohort46.user.dto.UserResponseDto;
 import ait.cohort46.user.dto.exception.UserExistsException;
 import ait.cohort46.user.model.User;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,6 +20,7 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
+    @Transactional
     public UserResponseDto createUser(UserRequestDto userRequestDto) {
         if (userRepository.findByEmail(userRequestDto.getEmail()).isPresent()) {
             throw new UserExistsException();
@@ -43,6 +45,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public Boolean deleteUser(Long user_id) {
         User user = userRepository.findById(user_id).orElseThrow(UserExistsException::new);
         userRepository.delete(user);

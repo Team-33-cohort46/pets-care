@@ -13,6 +13,9 @@ public interface UserService {
 
     Boolean changePassword(Long user_id, String oldPassword, String newPassword);
 
+    UserResponseDto getUserByEmail(String email);
+
+
 
 
 

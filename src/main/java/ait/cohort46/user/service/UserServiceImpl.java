@@ -20,7 +20,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponseDto createUser(UserRequestDto userRequestDto) {
-        if (userRepository.findByEmail(userRequestDto.getEmail())) {
+        if (userRepository.findByEmail(userRequestDto.getEmail()).isPresent()) {
             throw new UserExistsException();
         }
         String password = passwordEncoder.encode(userRequestDto.getPassword());
@@ -34,6 +34,12 @@ public class UserServiceImpl implements UserService {
                 .build();
         User savedUser = userRepository.save(user);
         return modelMapper.map(savedUser, UserResponseDto.class);
+    }
+
+    @Override
+    public UserResponseDto getUserByEmail(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(UserExistsException::new);
+        return modelMapper.map(user, UserResponseDto.class);
     }
 
     @Override

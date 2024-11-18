@@ -10,7 +10,9 @@ public interface PetsCareService {
 
     ServiceDTO addNewService(NewServiceDto newServiceDto);
 
-    ServiceDTO updateService(Integer id, UpdateServiceDto updateServiceDto);
+    ServiceDTO updateService(Long id, UpdateServiceDto updateServiceDto);
 
-    ServiceDTO deleteService(Integer id);
+    ServiceDTO deleteService(Long id);
+
+    Iterable<ResponseServiceDto> getSitterServices(Long id);
 }

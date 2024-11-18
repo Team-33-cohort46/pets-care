@@ -10,12 +10,9 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ServiceDTO {
+public class ResponseServiceDto {
     private Long id;
-    private UserRequestDto user;
     private String title;
     private String description;
     private Double price;
-    private String photo;
-    private ServiceCategoryDTO serviceCategory;
 }

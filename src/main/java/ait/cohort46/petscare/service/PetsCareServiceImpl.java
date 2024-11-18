@@ -74,7 +74,7 @@ public class PetsCareServiceImpl implements PetsCareService{
 
     @Transactional
     @Override
-    public ServiceDTO updateService(Integer id, UpdateServiceDto updateServiceDto) {
+    public ServiceDTO updateService(Long id, UpdateServiceDto updateServiceDto) {
         ait.cohort46.petscare.model.Service service = serviceRepository.findById(id)
                 .orElseThrow(ServiceNotFoundException::new);
         if (updateServiceDto.getTitle() != null) {
@@ -97,11 +97,18 @@ public class PetsCareServiceImpl implements PetsCareService{
     }
 
     @Override
-    public ServiceDTO deleteService(Integer id) {
+    public ServiceDTO deleteService(Long id) {
         ait.cohort46.petscare.model.Service service = serviceRepository.findById(id)
                 .orElseThrow(ServiceNotFoundException::new);
         serviceRepository.delete(service);
         return modelMapper.map(service, ServiceDTO.class);
+    }
+
+    @Override
+    public Iterable<ResponseServiceDto> getSitterServices(Long id) {
+        return serviceRepository.findServicesByUser(id)
+                .map(s -> modelMapper.map(s, ResponseServiceDto.class))
+                .toList();
     }
 
 

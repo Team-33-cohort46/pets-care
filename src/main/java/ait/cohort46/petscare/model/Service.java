@@ -15,7 +15,7 @@ import java.io.Serializable;
 public class Service implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private long id;
 
     @ManyToOne
     private User user;

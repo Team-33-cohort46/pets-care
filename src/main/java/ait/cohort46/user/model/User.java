@@ -3,15 +3,13 @@ package ait.cohort46.user.model;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.HashSet;
-import java.util.Set;
-
+import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Entity
 @Getter
-public class User {
+public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -37,7 +35,8 @@ public class User {
     @Setter
     private String description;
 
-//    @ElementCollection(fetch = FetchType.EAGER)
+
+    //    @ElementCollection(fetch = FetchType.EAGER)
 //    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
 //    @Column(name = "roles")
 //    private Set<String> roles = new HashSet<>();

@@ -3,14 +3,14 @@ package ait.cohort46.user.dto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.Set;
+import lombok.Setter;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@Setter
 public class UserResponseDto {
-    private Long user_id;
+    private Long id;
     private String firstName;
     private String lastName;
     private String email;

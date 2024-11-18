@@ -1,24 +1,24 @@
 package ait.cohort46.pet.model;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import ait.cohort46.user.model.User;
+import jakarta.persistence.*;
+import lombok.*;
 
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
+@Builder
+@Entity
 public class Pet {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int pet_id;
-    private int user_id;
-    private String type;
-    @Setter
+    private Long id;
     private String name;
-    @Setter
+    private String type;
     private String photo;
+    @ManyToOne
+    private User user;
+
+
 }

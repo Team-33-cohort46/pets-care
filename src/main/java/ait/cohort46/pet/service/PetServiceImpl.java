@@ -13,6 +13,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import ait.cohort46.user.dto.exception.UserExistsException;
 
+import java.util.Collections;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class PetServiceImpl implements PetService {
@@ -33,4 +36,13 @@ private final ModelMapper modelMapper;
         petRepository.save(pet);
         return modelMapper.map(pet, PetResponseDto.class);
     }
+
+//    @Override
+//    public List<Pet> getAllPets(Long user_id) {
+//      List<Pet> pets = petRepository.findPetsByUserId(user_id);
+//        if (pets.isEmpty()) {
+//            return Collections.emptyList();
+//        }
+//        return pets;
+//    }
 }

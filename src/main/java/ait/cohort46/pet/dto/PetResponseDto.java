@@ -15,5 +15,4 @@ public class PetResponseDto {
     private String name;
     private String type;
     private String photo;
-    private User user;
 }

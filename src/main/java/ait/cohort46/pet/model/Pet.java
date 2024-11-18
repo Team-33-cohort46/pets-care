@@ -19,4 +19,6 @@ public class Pet {
     private String photo;
     @ManyToOne
     private User user;
+
+
 }

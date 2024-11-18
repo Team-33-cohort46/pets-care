@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -37,7 +36,7 @@ public class User implements Serializable {
     private String description;
 
 
-//    @ElementCollection(fetch = FetchType.EAGER)
+    //    @ElementCollection(fetch = FetchType.EAGER)
 //    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
 //    @Column(name = "roles")
 //    private Set<String> roles = new HashSet<>();

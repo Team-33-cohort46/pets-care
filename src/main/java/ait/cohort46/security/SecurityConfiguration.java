@@ -18,6 +18,7 @@ public class SecurityConfiguration {
         http.csrf(csrf -> csrf.disable());  // Отключение CSRF для упрощения тестирования
         http.authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").authenticated()
+//                        .requestMatchers(HttpMethod.POST, "/api/services").authenticated()
                         .anyRequest().permitAll()   // Разрешает доступ ко всем запросам без аутентификации
                 );
 

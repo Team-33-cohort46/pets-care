@@ -1,22 +1,19 @@
-package ait.cohort46.pet.model;
+package ait.cohort46.pet.dto;
 
 import ait.cohort46.user.model.User;
-import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-@Entity
-public class Pet {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class PetResponseDto {
     private Long id;
     private String name;
     private String type;
     private String photo;
-    @ManyToOne
     private User user;
 }

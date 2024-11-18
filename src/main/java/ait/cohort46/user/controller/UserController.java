@@ -1,8 +1,6 @@
 package ait.cohort46.user.controller;
 
-import ait.cohort46.user.dto.UserEditDto;
-import ait.cohort46.user.dto.UserRequestDto;
-import ait.cohort46.user.dto.UserResponseDto;
+import ait.cohort46.user.dto.*;
 import ait.cohort46.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -30,8 +28,13 @@ public class UserController {
         return userService.deleteUser(user_id);
     }
 
-    @PutMapping("/auth/me/{user_id}")
-    public UserResponseDto updateUser(@PathVariable Long user_id, @RequestBody UserEditDto userEditDto) {
-        return userService.updateUser(user_id, userEditDto);
+    @PutMapping("/auth/me")
+    public UserResponseDto updateUser(@RequestBody UserEditDto userEditDto) {
+        return userService.updateUser(userEditDto);
     }
+
+//    @PostMapping("/pet/register/{user_id}")
+//    public PetResponseDto createPet(@PathVariable Long user_id, @RequestBody PetRequestDto petRequestDto) {
+//        return userService.createPet(user_id, petRequestDto);
+//    }
 }

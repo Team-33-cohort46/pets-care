@@ -6,8 +6,11 @@ import ait.cohort46.booking.dto.NewStatusBooking;
 import ait.cohort46.booking.dto.ResponseBookingDto;
 import ait.cohort46.booking.dto.exception.BookingNotFoundException;
 import ait.cohort46.booking.model.Booking;
+import ait.cohort46.pet.dao.PetRepository;
+import ait.cohort46.pet.model.Pet;
 import ait.cohort46.petscare.dao.ServiceRepository;
 import ait.cohort46.petscare.dto.exception.ServiceNotFoundException;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -17,19 +20,19 @@ import org.springframework.stereotype.Service;
 public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
     private final ServiceRepository serviceRepository;
-   // private final PetRepository petRepository;
+    private final PetRepository petRepository;
     private final ModelMapper modelMapper;
 
     @Override
     public ResponseBookingDto addBooking(CreateBookingDto createBookingDto) {
         ait.cohort46.petscare.model.Service service = serviceRepository.findById(createBookingDto.getServiceId())
                 .orElseThrow(ServiceNotFoundException::new);
-        //Pet pet = petRepository.findById(dto.getPetId())
-          //      .orElseThrow(() -> new EntityNotFoundException("Pet not found"));
+        Pet pet = petRepository.findById(createBookingDto.getPetId())
+                .orElseThrow(() -> new EntityNotFoundException("Pet not found"));
 
         Booking booking = Booking.builder()
                 .service(service)
-                //.pet(pet)
+                .pet(pet)
                 .startDate(createBookingDto.getStartDate())
                 .endDate(createBookingDto.getEndDate())
                 .status("pending")

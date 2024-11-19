@@ -18,13 +18,14 @@ public class BookingController {
     }
 
     @PatchMapping("/api/bookings/{booking_id}")
-    public ResponseBookingDto changeStatusBooking(@PathVariable Long id, @RequestBody NewStatusBooking newStatusBooking) {
-        return bookingService.changeStatusBooking(id, newStatusBooking);
+    public ResponseBookingDto changeStatusBooking(@PathVariable Long booking_id, @RequestBody NewStatusBooking newStatusBooking) {
+        return bookingService.changeStatusBooking(booking_id, newStatusBooking);
     }
 
     @GetMapping("/api/bookings/{booking_id}")
-    public ResponseBookingDto getBooking(@PathVariable Long bookingId) {
-        return bookingService.getBooking(bookingId);
+    public ResponseBookingDto getBooking(@PathVariable Long booking_id) {
+
+        return bookingService.getBooking(booking_id);
     }
 
 }

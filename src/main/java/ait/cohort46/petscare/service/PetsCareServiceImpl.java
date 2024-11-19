@@ -106,7 +106,7 @@ public class PetsCareServiceImpl implements PetsCareService{
 
     @Override
     public Iterable<ResponseServiceDto> getSitterServices(Long id) {
-        return serviceRepository.findServicesByUser(id)
+        return serviceRepository.findByUserId(id)
                 .map(s -> modelMapper.map(s, ResponseServiceDto.class))
                 .toList();
     }

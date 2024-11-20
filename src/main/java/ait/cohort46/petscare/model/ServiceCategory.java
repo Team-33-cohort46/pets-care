@@ -13,7 +13,7 @@ import java.io.Serializable;
 public class ServiceCategory implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
     @Setter
     @Column(nullable = false)
     private String title;

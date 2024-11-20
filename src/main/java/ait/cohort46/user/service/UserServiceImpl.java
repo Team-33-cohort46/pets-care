@@ -4,9 +4,11 @@ import ait.cohort46.user.dao.UserRepository;
 import ait.cohort46.user.dto.*;
 import ait.cohort46.user.dto.exception.UserExistsException;
 import ait.cohort46.user.model.User;
+import ait.cohort46.utils.JwtUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,10 +20,11 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
+    private final JwtUtils jwtUtils;
 
     @Override
     @Transactional
-    public UserResponseDto createUser(UserRequestDto userRequestDto) {
+    public String createUser(UserRequestDto userRequestDto) {
         if (userRepository.findByEmail(userRequestDto.getEmail()).isPresent()) {
             throw new UserExistsException();
         }
@@ -35,7 +38,7 @@ public class UserServiceImpl implements UserService {
                 .description(userRequestDto.getDescription())
                 .build();
         User savedUser = userRepository.save(user);
-        return modelMapper.map(savedUser, UserResponseDto.class);
+        return jwtUtils.generateToken(savedUser.getEmail());
     }
 
     @Override

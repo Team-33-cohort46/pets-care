@@ -1,8 +1,15 @@
 package ait.cohort46.user.controller;
 
+import ait.cohort46.user.dao.UserRepository;
 import ait.cohort46.user.dto.*;
+import ait.cohort46.user.dto.exception.UserExistsException;
+import ait.cohort46.user.model.User;
 import ait.cohort46.user.service.UserService;
+import ait.cohort46.utils.JwtUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -12,15 +19,23 @@ import java.security.Principal;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtUtils jwtUtils;
 
     @PostMapping("/register")
-    public UserResponseDto createUser(@RequestBody UserRequestDto userRequestDto) {
+    public String createUser(@RequestBody UserRequestDto userRequestDto) {
         return userService.createUser(userRequestDto);
     }
 
     @PostMapping("/login")
-    public UserResponseDto login(Principal principal) {
-        return userService.getUserByEmail(principal.getName());
+    public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto loginRequest) {
+        User user = userRepository.findByEmail(loginRequest.getEmail()).orElseThrow(UserExistsException::new);
+        if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
+            return ResponseEntity.status(401).build();
+        }
+        String token = jwtUtils.generateToken(user.getEmail());
+        return ResponseEntity.ok(new LoginResponseDto(token));
     }
 
     @DeleteMapping("/me/{user_id}")

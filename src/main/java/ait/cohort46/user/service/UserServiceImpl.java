@@ -43,6 +43,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponseDto getUserByEmail(String email) {
         User user = userRepository.findByEmail(email).orElseThrow(UserExistsException::new);
+        if (user.getIsDeleted()){
+            throw new RuntimeException("User is deleted");
+        }
         return modelMapper.map(user, UserResponseDto.class);
     }
 
@@ -59,7 +62,7 @@ public class UserServiceImpl implements UserService {
     public UserResponseDto updateUser(UserEditDto userEditDto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
-        User user = userRepository.findByEmail(email).orElseThrow(UserExistsException::new);
+        User user = userRepository.findByEmailAndIsDeletedFalse(email).orElseThrow(UserExistsException::new);
         if (userEditDto.getFirstName() != null) {
             user.setFirstName(userEditDto.getFirstName());
         }
@@ -79,10 +82,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void restoreUser(String email) {
-        User user = userRepository.findByEmail(email).orElseThrow(UserExistsException::new);
-        if (!user.getIsDeleted()) {
-            throw new RuntimeException("User is not deleted");
-        }
+        User user = userRepository.findByEmailAndIsDeletedFalse(email).orElseThrow(UserExistsException::new);
         user.setDeleted(false);
         userRepository.save(user);
     }

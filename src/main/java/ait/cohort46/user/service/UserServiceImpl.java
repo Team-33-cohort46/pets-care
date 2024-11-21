@@ -8,7 +8,6 @@ import ait.cohort46.utils.JwtUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,11 +19,10 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
-    private final JwtUtils jwtUtils;
 
     @Override
     @Transactional
-    public String createUser(UserRequestDto userRequestDto) {
+    public UserResponseDto createUser(UserRequestDto userRequestDto) {
         if (userRepository.findByEmail(userRequestDto.getEmail()).isPresent()) {
             throw new UserExistsException();
         }
@@ -36,9 +34,10 @@ public class UserServiceImpl implements UserService {
                 .password(password)
                 .photo(userRequestDto.getPhoto())
                 .description(userRequestDto.getDescription())
+                .isDeleted(false)
                 .build();
         User savedUser = userRepository.save(user);
-        return jwtUtils.generateToken(savedUser.getEmail());
+        return modelMapper.map(savedUser, UserResponseDto.class);
     }
 
     @Override
@@ -51,7 +50,8 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public Boolean deleteUser(Long id) {
         User user = userRepository.findById(id).orElseThrow(UserExistsException::new);
-        userRepository.delete(user);
+        user.setDeleted(true);
+        userRepository.save(user);
         return true;
     }
 
@@ -66,6 +66,8 @@ public class UserServiceImpl implements UserService {
         if (userEditDto.getLastName() != null) {
             user.setLastName(userEditDto.getLastName());
         }
+        user.setDescription(userEditDto.getDescription());
+        user.setPhoto(userEditDto.getPhoto());
         userRepository.save(user);
         return modelMapper.map(user, UserResponseDto.class);
     }
@@ -73,5 +75,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public Boolean changePassword(Long user_id, String oldPassword, String newPassword) {
         return null;
+    }
+
+    @Override
+    public void restoreUser(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(UserExistsException::new);
+        if (!user.getIsDeleted()) {
+            throw new RuntimeException("User is not deleted");
+        }
+        user.setDeleted(false);
+        userRepository.save(user);
     }
 }

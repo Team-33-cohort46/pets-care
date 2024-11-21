@@ -24,13 +24,13 @@ public class UserController {
     private final JwtUtils jwtUtils;
 
     @PostMapping("/register")
-    public String createUser(@RequestBody UserRequestDto userRequestDto) {
+    public UserResponseDto createUser(@RequestBody UserRequestDto userRequestDto) {
         return userService.createUser(userRequestDto);
     }
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto loginRequest) {
-        User user = userRepository.findByEmail(loginRequest.getEmail()).orElseThrow(UserExistsException::new);
+        User user = userRepository.findByEmailAndIsDeletedFalse(loginRequest.getEmail()).orElseThrow(UserExistsException::new);
         if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
             return ResponseEntity.status(401).build();
         }
@@ -38,9 +38,19 @@ public class UserController {
         return ResponseEntity.ok(new LoginResponseDto(token));
     }
 
+    @GetMapping("/user/{email}")
+    public UserResponseDto getUserByEmail(@PathVariable String email) {
+        return userService.getUserByEmail(email);
+    }
+
     @DeleteMapping("/me/{user_id}")
     public Boolean deleteUser(@PathVariable Long user_id) {
         return userService.deleteUser(user_id);
+    }
+
+    @PostMapping("register/restore/{email}")
+        public void restoreUser(@PathVariable String email) {
+        userService.restoreUser(email);
     }
 
     @PutMapping("/me")

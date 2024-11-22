@@ -45,8 +45,8 @@ public class User implements Serializable {
     @Column(name = "review")
     private List<String> reviews;
 
-    public boolean addReview(String review) {
-        return reviews.add(review);
+    public void addReview(String review) {
+        reviews.add(review);
     }
 
     public void setDeleted(Boolean deleted) {

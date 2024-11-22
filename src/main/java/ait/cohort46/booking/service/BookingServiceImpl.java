@@ -4,15 +4,22 @@ import ait.cohort46.booking.dao.BookingRepository;
 import ait.cohort46.booking.dto.CreateBookingDto;
 import ait.cohort46.booking.dto.NewStatusBooking;
 import ait.cohort46.booking.dto.ResponseBookingDto;
+import ait.cohort46.booking.dto.exception.BookingInvalidStatusException;
 import ait.cohort46.booking.dto.exception.BookingNotFoundException;
 import ait.cohort46.booking.model.Booking;
 import ait.cohort46.pet.dao.PetRepository;
 import ait.cohort46.pet.model.Pet;
 import ait.cohort46.petscare.dao.ServiceRepository;
 import ait.cohort46.petscare.dto.exception.ServiceNotFoundException;
+import ait.cohort46.user.dao.UserRepository;
+import ait.cohort46.user.dto.exception.UserExistsException;
+import ait.cohort46.user.model.User;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -21,8 +28,11 @@ public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
     private final ServiceRepository serviceRepository;
     private final PetRepository petRepository;
+    private final UserRepository userRepository;
     private final ModelMapper modelMapper;
 
+
+    @Transactional
     @Override
     public ResponseBookingDto addBooking(CreateBookingDto createBookingDto) {
         ait.cohort46.petscare.model.Service service = serviceRepository.findById(createBookingDto.getServiceId())
@@ -39,16 +49,40 @@ public class BookingServiceImpl implements BookingService {
                 .build();
 
         booking = bookingRepository.save(booking);
-        return modelMapper.map(booking, ResponseBookingDto.class);
+        ResponseBookingDto responseBookingDto = modelMapper.map(booking, ResponseBookingDto.class);
+        responseBookingDto.setServiceId(service.getId());
+        responseBookingDto.setPetId(pet.getId());
+        return responseBookingDto;
     }
 
     @Override
     public ResponseBookingDto changeStatusBooking(Long id, NewStatusBooking newStatusBooking) {
         Booking booking = bookingRepository.findById(id).orElseThrow(BookingNotFoundException::new);
-        if (newStatusBooking.getStatus().equals("cancelled") || newStatusBooking.getStatus().equals("confirmed")) {
+
+        // Получаем информацию о текущем аутентифицированном пользователе
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = authentication.getName(); // Получаем имя пользователя из аутентификационных данных
+        User user = userRepository.findByEmail(currentUsername)
+                .orElseThrow(UserExistsException::new);
+
+        User owner = booking.getPet().getUser();
+        User sitter = booking.getService().getUser();
+
+        //эти статусы может присвоить только ситтер, который указан в сервисе
+        if (user.equals(sitter) && (newStatusBooking.getStatus().equals("rejected") || newStatusBooking.getStatus().equals("confirmed"))) {
             booking.setStatus(newStatusBooking.getStatus());
+            booking = bookingRepository.save(booking);
+        } else {
+            throw new BookingInvalidStatusException();
         }
-        booking = bookingRepository.save(booking);
+
+        if (user.equals(owner) && newStatusBooking.getStatus().equals("cancelled")) {
+            booking.setStatus(newStatusBooking.getStatus());
+            booking = bookingRepository.save(booking);
+        } else {
+            throw new BookingInvalidStatusException();
+        }
+
         return modelMapper.map(booking, ResponseBookingDto.class);
     }
 

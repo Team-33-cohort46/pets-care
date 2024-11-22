@@ -33,5 +33,5 @@ public class Booking implements Serializable {
 
     @Column(nullable = false)
     @Setter
-    private String status = "pending"; // Возможные значения: pending, confirmed, canceled
+    private String status = "pending"; // Возможные значения: pending, confirmed, canceled, rejected
 }

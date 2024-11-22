@@ -16,14 +16,14 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/pets")
 @RequiredArgsConstructor
 public class PetController {
     private final UserRepository userRepository;
     private final PetService petService;
     private final PetRepository petRepository;
 
-    @PostMapping("/pet/register")
+    @PostMapping()
     public PetResponseDto createPet(@RequestBody PetRequestDto petRequestDto) {
         return petService.createPet(petRequestDto);
     }

@@ -82,7 +82,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void restoreUser(String email) {
-        User user = userRepository.findByEmailAndIsDeletedFalse(email).orElseThrow(UserExistsException::new);
+        User user = userRepository.findByEmail(email).orElseThrow(UserExistsException::new);
+        if (!user.getIsDeleted()){
+            throw new RuntimeException("User is deleted");
+        }
         user.setDeleted(false);
         userRepository.save(user);
     }

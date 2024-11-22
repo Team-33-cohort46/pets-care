@@ -10,7 +10,7 @@ import java.util.Date;
 @Configuration
 public class JwtUtils {
     private static final String SECRET_KEY = "mySecretKey";  // Секретный ключ для подписи JWT
-    private static final long EXPIRATION_TIME = 1000 * 60 * 60; // Время действия токена (1 час)
+    private static final long EXPIRATION_TIME = 1000 * 60 * 60 * 24; // Время действия токена (1 час)
 
 
     public String generateToken(String email) {

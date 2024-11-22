@@ -4,10 +4,10 @@ import ait.cohort46.utils.JwtUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
@@ -17,11 +17,15 @@ public class SecurityConfiguration {
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable());
-                http.authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/auth/login", "/api/auth/register", "/api/services_category").permitAll()
+        http.authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/auth/login", "/auth/register", "/services_category", "/auth/register/restore").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/auth/me/{email}")
+                        .access(new WebExpressionAuthorizationManager("#email == authentication.name"))
+                        .requestMatchers(HttpMethod.GET, "/auth/user/{email}")
+                        .access(new WebExpressionAuthorizationManager("#email == authentication.name"))
                         .anyRequest().authenticated()
                 )
-                        .addFilterBefore(new JwtAuthenticationFilter(new JwtUtils()), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new JwtAuthenticationFilter(new JwtUtils()), UsernamePasswordAuthenticationFilter.class);
         return http.build();
 
     }

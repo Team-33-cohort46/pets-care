@@ -51,8 +51,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public Boolean deleteUser(Long id) {
-        User user = userRepository.findById(id).orElseThrow(UserExistsException::new);
+    public Boolean deleteUser(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(UserExistsException::new);
         user.setDeleted(true);
         userRepository.save(user);
         return true;
@@ -81,11 +81,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void restoreUser(String email) {
-        User user = userRepository.findByEmail(email).orElseThrow(UserExistsException::new);
+    public void restoreUser(UserRestoreDto userRestoreDto) {
+        User user = userRepository.findByEmail(userRestoreDto.getEmail()).orElseThrow(UserExistsException::new);
         if (!user.getIsDeleted()){
-            throw new RuntimeException("User is deleted");
+            throw new RuntimeException("User is not deleted");
         }
+        user.setPassword(passwordEncoder.encode(userRestoreDto.getPassword()));
         user.setDeleted(false);
         userRepository.save(user);
     }

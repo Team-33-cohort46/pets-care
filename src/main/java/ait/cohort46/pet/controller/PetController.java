@@ -15,15 +15,15 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@RequestMapping("/pets")
 @RestController
-@RequestMapping("/api")
 @RequiredArgsConstructor
 public class PetController {
     private final UserRepository userRepository;
     private final PetService petService;
     private final PetRepository petRepository;
 
-    @PostMapping("/pet/register")
+    @PostMapping()
     public PetResponseDto createPet(@RequestBody PetRequestDto petRequestDto) {
         return petService.createPet(petRequestDto);
     }
@@ -32,7 +32,7 @@ public class PetController {
     public List<Pet> getAllPets() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
-        User user = userRepository.findByEmail(email).orElseThrow(UserExistsException::new);
+        User user = userRepository.findByEmailAndIsDeletedFalse(email).orElseThrow(UserExistsException::new);
         return petRepository.findPetsByUserId(user.getId());
     }
 }

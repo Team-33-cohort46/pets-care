@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/auth")
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
@@ -43,14 +43,14 @@ public class UserController {
         return userService.getUserByEmail(email);
     }
 
-    @DeleteMapping("/me/{user_id}")
-    public Boolean deleteUser(@PathVariable Long user_id) {
-        return userService.deleteUser(user_id);
+    @DeleteMapping("/me/{email}")
+    public Boolean deleteUser(@PathVariable String email) {
+        return userService.deleteUser(email);
     }
 
-    @PostMapping("register/restore/{email}")
-        public void restoreUser(@PathVariable String email) {
-        userService.restoreUser(email);
+    @PostMapping("/register/restore")
+        public void restoreUser(@RequestBody UserRestoreDto userRestoreDto) {
+        userService.restoreUser(userRestoreDto);
     }
 
     @PutMapping("/me")

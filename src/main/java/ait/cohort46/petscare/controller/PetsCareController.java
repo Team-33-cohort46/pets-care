@@ -12,33 +12,34 @@ import java.util.List;
 public class PetsCareController {
     private final PetsCareService petsCareService;
 
-    @GetMapping("/api/services_category")
+    @GetMapping("/services_categories")
     public Iterable<ServiceCategoryDTO> getServiceCategories() {
         return petsCareService.getServiceCategories();
     }
 
-    @PostMapping("/api/admin/services_category")
+    @PostMapping("/admin/services_categories")
     public ServiceCategoryDTO addServiceCategory(@RequestBody NewServiceCategoryDto newServiceCategoryDto) {
         return petsCareService.addServiceCategory(newServiceCategoryDto);
     }
 
-    @PostMapping("/api/services")
+    @PostMapping("/services")
     public ServiceDTO addNewService(@RequestBody NewServiceDto newServiceDto) {
         return petsCareService.addNewService(newServiceDto);
     }
 
-    @PatchMapping("/api/services/{service_id}")
-    public ServiceDTO updateService(@PathVariable Long service_id, @RequestBody UpdateServiceDto updateServiceDto) {
-        return petsCareService.updateService(service_id, updateServiceDto);
+    @PatchMapping("/services/{id}")
+    public ServiceDTO updateService(@PathVariable Long id, @RequestBody UpdateServiceDto updateServiceDto) {
+        return petsCareService.updateService(id, updateServiceDto);
     }
 
-    @DeleteMapping("/api/services/{service_id}")
-    public ServiceDTO deleteService(@PathVariable Long service_id) {
-        return petsCareService.deleteService(service_id);
+    @DeleteMapping("/services/{id}")
+    public ServiceDTO deleteService(@PathVariable Long id) {
+        return petsCareService.deleteService(id);
     }
 
-    @GetMapping("/api/sitters/{sitterId}/services")
-    public Iterable<ResponseServiceDto> getSitterServices(@PathVariable Long sitterId) {
-        return petsCareService.getSitterServices(sitterId);
-    }
+///api/services?sitterId={id}
+//    @GetMapping("/services?sitterId={id}")
+//    public Iterable<ResponseServiceDto> getSitterServices(@RequestParam Long id) {
+//        return petsCareService.getSitterServices(id);
+//    }
 }

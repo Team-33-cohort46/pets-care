@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/auth")
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
@@ -37,10 +37,10 @@ public class UserController {
         String token = jwtUtils.generateToken(user.getEmail());
         return ResponseEntity.ok(new LoginResponseDto(token));
     }
-
-    @DeleteMapping("/me/{user_id}")
-    public Boolean deleteUser(@PathVariable Long user_id) {
-        return userService.deleteUser(user_id);
+    //users/{id}
+    @DeleteMapping("/me/{id}")
+    public Boolean deleteUser(@PathVariable Long id) {
+        return userService.deleteUser(id);
     }
 
     @PutMapping("/me")
@@ -48,8 +48,8 @@ public class UserController {
         return userService.updateUser(userEditDto);
     }
 
-//    @PostMapping("/pet/register/{user_id}")
-//    public PetResponseDto createPet(@PathVariable Long user_id, @RequestBody PetRequestDto petRequestDto) {
-//        return userService.createPet(user_id, petRequestDto);
+//    @PostMapping("/pet/register/{id}")
+//    public PetResponseDto createPet(@PathVariable Long id, @RequestBody PetRequestDto petRequestDto) {
+//        return userService.createPet(id, petRequestDto);
 //    }
 }

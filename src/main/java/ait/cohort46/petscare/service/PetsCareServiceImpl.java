@@ -45,11 +45,10 @@ public class PetsCareServiceImpl implements PetsCareService{
     @Transactional
     @Override
     public ServiceDTO addNewService(NewServiceDto newServiceDto) {
-    //TODO  get user_id
         // Получаем информацию о текущем аутентифицированном пользователе
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUsername = authentication.getName(); // Получаем имя пользователя из аутентификационных данных
-        System.out.println("currentUsername= " + currentUsername);
+        //System.out.println("currentUsername= " + currentUsername);
         // Получаем текущего пользователя из базы данных по имени (или email)
         User user = userRepository.findByEmail(currentUsername)
                 .orElseThrow(UserExistsException::new);

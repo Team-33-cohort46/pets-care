@@ -1,5 +1,6 @@
 package ait.cohort46.user.service;
 
+import ait.cohort46.review.dto.ReviewDto;
 import ait.cohort46.user.dao.UserRepository;
 import ait.cohort46.user.dto.*;
 import ait.cohort46.user.dto.exception.UserExistsException;
@@ -90,4 +91,18 @@ public class UserServiceImpl implements UserService {
         user.setDeleted(false);
         userRepository.save(user);
     }
+
+    @Override
+    public UserResponseDto addReview(String email, ReviewDto reviewDto) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String reviewerEmail = authentication.getName();
+        User recipient = userRepository.findByEmailAndIsDeletedFalse(email).orElseThrow(UserExistsException::new);
+        if (reviewerEmail.equals(email)) {
+            throw new RuntimeException("You cannot add review for urself");
+        }
+        recipient.addReview(reviewDto.getMessage());
+        return modelMapper.map(userRepository.save(recipient), UserResponseDto.class);
+    }
+
+
 }

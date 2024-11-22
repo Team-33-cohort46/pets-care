@@ -1,5 +1,6 @@
 package ait.cohort46.user.controller;
 
+import ait.cohort46.review.dto.ReviewDto;
 import ait.cohort46.user.dao.UserRepository;
 import ait.cohort46.user.dto.*;
 import ait.cohort46.user.dto.exception.UserExistsException;
@@ -56,6 +57,11 @@ public class UserController {
     @PutMapping("/me")
     public UserResponseDto updateUser(@RequestBody UserEditDto userEditDto) {
         return userService.updateUser(userEditDto);
+    }
+
+    @PatchMapping("/user/{email}")
+    public UserResponseDto addReview(@PathVariable String email, @RequestBody ReviewDto reviewDto) {
+        return userService.addReview(email, reviewDto);
     }
 
 //    @PostMapping("/pet/register/{user_id}")

@@ -21,8 +21,6 @@ public class SecurityConfiguration {
                         .requestMatchers("/auth/login", "/auth/register", "/services_category", "/auth/register/restore").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/auth/me/{email}")
                         .access(new WebExpressionAuthorizationManager("#email == authentication.name"))
-                        .requestMatchers(HttpMethod.GET, "/auth/user/{email}")
-                        .access(new WebExpressionAuthorizationManager("#email == authentication.name"))
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(new JwtAuthenticationFilter(new JwtUtils()), UsernamePasswordAuthenticationFilter.class);

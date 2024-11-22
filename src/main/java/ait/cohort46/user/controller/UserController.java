@@ -43,9 +43,6 @@ public class UserController {
         return userService.getUserByEmail(email);
     }
 
-    @DeleteMapping("/me/{user_id}")
-    public Boolean deleteUser(@PathVariable Long user_id) {
-        return userService.deleteUser(user_id);
     //users/{id}
     @DeleteMapping("/me/{id}")
     public Boolean deleteUser(@PathVariable Long id) {

@@ -12,20 +12,21 @@ import org.springframework.web.bind.annotation.*;
 public class BookingController {
     private final BookingService bookingService;
 
-    @PostMapping("/api/bookings")
+    @PostMapping("/bookings")
     public ResponseBookingDto addBooking(@RequestBody CreateBookingDto createBookingDto) {
         return bookingService.addBooking(createBookingDto);
     }
 
-    @PatchMapping("/api/bookings/{booking_id}")
-    public ResponseBookingDto changeStatusBooking(@PathVariable Long booking_id, @RequestBody NewStatusBooking newStatusBooking) {
-        return bookingService.changeStatusBooking(booking_id, newStatusBooking);
+    @PatchMapping("/bookings/{id}")
+    public ResponseBookingDto changeStatusBooking(@PathVariable Long id, @RequestBody NewStatusBooking newStatusBooking) {
+        return bookingService.changeStatusBooking(id, newStatusBooking);
     }
 
-    @GetMapping("/api/bookings/{booking_id}")
-    public ResponseBookingDto getBooking(@PathVariable Long booking_id) {
+    @GetMapping("/bookings/{id}")
+    public ResponseBookingDto getBooking(@PathVariable Long id) {
 
-        return bookingService.getBooking(booking_id);
+        return bookingService.getBooking(id);
     }
+
 
 }

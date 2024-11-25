@@ -5,18 +5,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class UserResponseDto {
-    private Long id;
-    private String firstName;
-    private String lastName;
+public class UserRestoreDto {
     private String email;
-    private List<String> reviews;
-    private String photo;
-    private String description;
+    private String password;
 }

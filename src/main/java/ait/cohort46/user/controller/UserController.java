@@ -1,5 +1,6 @@
 package ait.cohort46.user.controller;
 
+import ait.cohort46.review.dto.ReviewDto;
 import ait.cohort46.user.dao.UserRepository;
 import ait.cohort46.user.dto.*;
 import ait.cohort46.user.dto.exception.UserExistsException;
@@ -43,15 +44,14 @@ public class UserController {
         return userService.getUserByEmail(email);
     }
 
-    //users/{id}
-    @DeleteMapping("/me/{id}")
-    public Boolean deleteUser(@PathVariable Long id) {
-        return userService.deleteUser(id);
+    @DeleteMapping("/me/{email}")
+    public Boolean deleteUser(@PathVariable String email) {
+        return userService.deleteUser(email);
     }
 
-    @PostMapping("register/restore/{email}")
-        public void restoreUser(@PathVariable String email) {
-        userService.restoreUser(email);
+    @PostMapping("/register/restore")
+        public void restoreUser(@RequestBody UserRestoreDto userRestoreDto) {
+        userService.restoreUser(userRestoreDto);
     }
 
     @PutMapping("/me")
@@ -59,8 +59,13 @@ public class UserController {
         return userService.updateUser(userEditDto);
     }
 
-//    @PostMapping("/pet/register/{id}")
-//    public PetResponseDto createPet(@PathVariable Long id, @RequestBody PetRequestDto petRequestDto) {
-//        return userService.createPet(id, petRequestDto);
+    @PatchMapping("/user/{email}")
+    public UserResponseDto addReview(@PathVariable String email, @RequestBody ReviewDto reviewDto) {
+        return userService.addReview(email, reviewDto);
+    }
+
+//    @PostMapping("/pet/register/{user_id}")
+//    public PetResponseDto createPet(@PathVariable Long user_id, @RequestBody PetRequestDto petRequestDto) {
+//        return userService.createPet(user_id, petRequestDto);
 //    }
 }

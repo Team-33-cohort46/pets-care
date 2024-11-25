@@ -26,7 +26,7 @@ private final ModelMapper modelMapper;
     public PetResponseDto createPet(PetRequestDto petRequestDto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
-        User user = userRepository.findByEmail(email).orElseThrow(UserExistsException::new);
+        User user = userRepository.findByEmailAndIsDeletedFalse(email).orElseThrow(UserExistsException::new);
         Pet pet = Pet.builder()
                 .name(petRequestDto.getName())
                 .type(petRequestDto.getType())

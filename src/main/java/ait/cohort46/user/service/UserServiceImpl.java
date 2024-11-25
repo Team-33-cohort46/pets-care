@@ -1,5 +1,6 @@
 package ait.cohort46.user.service;
 
+import ait.cohort46.review.dto.ReviewDto;
 import ait.cohort46.user.dao.UserRepository;
 import ait.cohort46.user.dto.*;
 import ait.cohort46.user.dto.exception.UserExistsException;
@@ -51,8 +52,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public Boolean deleteUser(Long id) {
-        User user = userRepository.findById(id).orElseThrow(UserExistsException::new);
+    public Boolean deleteUser(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(UserExistsException::new);
         user.setDeleted(true);
         userRepository.save(user);
         return true;
@@ -81,12 +82,27 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void restoreUser(String email) {
-        User user = userRepository.findByEmail(email).orElseThrow(UserExistsException::new);
+    public void restoreUser(UserRestoreDto userRestoreDto) {
+        User user = userRepository.findByEmail(userRestoreDto.getEmail()).orElseThrow(UserExistsException::new);
         if (!user.getIsDeleted()){
-            throw new RuntimeException("User is deleted");
+            throw new RuntimeException("User is not deleted");
         }
+        user.setPassword(passwordEncoder.encode(userRestoreDto.getPassword()));
         user.setDeleted(false);
         userRepository.save(user);
     }
+
+    @Override
+    public UserResponseDto addReview(String email, ReviewDto reviewDto) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String reviewerEmail = authentication.getName();
+        User recipient = userRepository.findByEmailAndIsDeletedFalse(email).orElseThrow(UserExistsException::new);
+        if (reviewerEmail.equals(email)) {
+            throw new RuntimeException("You cannot add review for urself");
+        }
+        recipient.addReview(reviewDto.getMessage());
+        return modelMapper.map(userRepository.save(recipient), UserResponseDto.class);
+    }
+
+
 }

@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
+import java.util.List;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -37,6 +39,15 @@ public class User implements Serializable {
 
     @Setter
     private Boolean isDeleted = false;
+
+    @ElementCollection
+    @CollectionTable(name = "user_reviews", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "review")
+    private List<String> reviews;
+
+    public void addReview(String review) {
+        reviews.add(review);
+    }
 
     public void setDeleted(Boolean deleted) {
         isDeleted = deleted;

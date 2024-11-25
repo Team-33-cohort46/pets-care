@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
 @RequestMapping("/pets")
+@RestController
 @RequiredArgsConstructor
 public class PetController {
     private final UserRepository userRepository;
@@ -32,7 +32,7 @@ public class PetController {
     public List<Pet> getAllPets() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
-        User user = userRepository.findByEmail(email).orElseThrow(UserExistsException::new);
+        User user = userRepository.findByEmailAndIsDeletedFalse(email).orElseThrow(UserExistsException::new);
         return petRepository.findPetsByUserId(user.getId());
     }
 }

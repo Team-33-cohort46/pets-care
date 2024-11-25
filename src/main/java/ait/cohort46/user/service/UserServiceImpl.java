@@ -1,11 +1,12 @@
 package ait.cohort46.user.service;
 
+import ait.cohort46.review.dao.ReviewRepository;
 import ait.cohort46.review.dto.ReviewDto;
+import ait.cohort46.review.model.Review;
 import ait.cohort46.user.dao.UserRepository;
 import ait.cohort46.user.dto.*;
 import ait.cohort46.user.dto.exception.UserExistsException;
 import ait.cohort46.user.model.User;
-import ait.cohort46.utils.JwtUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -20,6 +21,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
+    private final ReviewRepository reviewRepository;
 
     @Override
     @Transactional
@@ -44,7 +46,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponseDto getUserByEmail(String email) {
         User user = userRepository.findByEmail(email).orElseThrow(UserExistsException::new);
-        if (user.getIsDeleted()){
+        if (user.getIsDeleted()) {
             throw new RuntimeException("User is deleted");
         }
         return modelMapper.map(user, UserResponseDto.class);
@@ -84,7 +86,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void restoreUser(UserRestoreDto userRestoreDto) {
         User user = userRepository.findByEmail(userRestoreDto.getEmail()).orElseThrow(UserExistsException::new);
-        if (!user.getIsDeleted()){
+        if (!user.getIsDeleted()) {
             throw new RuntimeException("User is not deleted");
         }
         user.setPassword(passwordEncoder.encode(userRestoreDto.getPassword()));
@@ -100,9 +102,17 @@ public class UserServiceImpl implements UserService {
         if (reviewerEmail.equals(email)) {
             throw new RuntimeException("You cannot add review for urself");
         }
-        recipient.addReview(reviewDto.getMessage());
+        Review review = Review.builder()
+                .reviewerEmail(reviewerEmail)
+                .message(reviewDto.getMessage())
+                .stars(reviewDto.getStars())
+                .build();
+        recipient.addReview(review);
+        reviewRepository.save(review);
         return modelMapper.map(userRepository.save(recipient), UserResponseDto.class);
     }
+
+
 
 
 }

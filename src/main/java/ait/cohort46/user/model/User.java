@@ -1,5 +1,6 @@
 package ait.cohort46.user.model;
 
+import ait.cohort46.review.model.Review;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -40,13 +41,17 @@ public class User implements Serializable {
     @Setter
     private Boolean isDeleted = false;
 
-    @ElementCollection
-    @CollectionTable(name = "user_reviews", joinColumns = @JoinColumn(name = "user_id"))
-    @Column(name = "review")
-    private List<String> reviews;
+    @Setter
+    @OneToMany
+    private List<Review> reviews;
 
-    public boolean addReview(String review) {
-        return reviews.add(review);
+//    @ElementCollection
+//    @CollectionTable(name = "user_reviews", joinColumns = @JoinColumn(name = "user_id"))
+//    @Column(name = "review")
+//    private List<String> reviews;
+
+    public void addReview(Review review) {
+        reviews.add(review);
     }
 
     public void setDeleted(Boolean deleted) {

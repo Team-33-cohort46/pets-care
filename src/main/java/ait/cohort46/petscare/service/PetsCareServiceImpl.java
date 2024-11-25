@@ -16,10 +16,12 @@ import org.modelmapper.ModelMapper;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import java.util.stream.Stream;
+
 
 @Service
 @RequiredArgsConstructor
-public class PetsCareServiceImpl implements PetsCareService{
+public class PetsCareServiceImpl implements PetsCareService {
     private final ServiceCategoryRepository serviceCategoryRepository;
     private final ServiceRepository serviceRepository;
     private final UserRepository userRepository;
@@ -95,6 +97,7 @@ public class PetsCareServiceImpl implements PetsCareService{
         return modelMapper.map(service, ServiceDTO.class);
     }
 
+    @Transactional
     @Override
     public ServiceDTO deleteService(Long id) {
         ait.cohort46.petscare.model.Service service = serviceRepository.findById(id)
@@ -103,11 +106,14 @@ public class PetsCareServiceImpl implements PetsCareService{
         return modelMapper.map(service, ServiceDTO.class);
     }
 
+    @Transactional
     @Override
     public Iterable<ResponseServiceDto> getSitterServices(Long id) {
-        return serviceRepository.findByUserId(id)
-                .map(s -> modelMapper.map(s, ResponseServiceDto.class))
-                .toList();
+        try (Stream<ait.cohort46.petscare.model.Service> services = serviceRepository.findByUserId(id)) {
+            return services
+                    .map(s -> modelMapper.map(s, ResponseServiceDto.class))
+                    .toList();
+        }
     }
 
 

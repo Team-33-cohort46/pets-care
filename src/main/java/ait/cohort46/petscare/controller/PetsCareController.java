@@ -38,8 +38,8 @@ public class PetsCareController {
     }
 
 ///api/services?sitterId={id}
-//    @GetMapping("/services?sitterId={id}")
-//    public Iterable<ResponseServiceDto> getSitterServices(@RequestParam Long id) {
-//        return petsCareService.getSitterServices(id);
-//    }
+    @GetMapping("/services")
+    public Iterable<ResponseServiceDto> getSitterServices(@RequestParam("sitterId") Long id) {
+        return petsCareService.getSitterServices(id);
+    }
 }

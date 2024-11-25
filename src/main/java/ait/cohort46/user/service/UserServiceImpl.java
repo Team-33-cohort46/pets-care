@@ -53,6 +53,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserResponseDto getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        User user = userRepository.findByEmailAndIsDeletedFalse(email).orElseThrow(UserExistsException::new);
+        return modelMapper.map(user, UserResponseDto.class);
+    }
+
+    @Override
     @Transactional
     public Boolean deleteUser(String email) {
         User user = userRepository.findByEmail(email).orElseThrow(UserExistsException::new);

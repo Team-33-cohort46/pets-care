@@ -17,4 +17,6 @@ public interface UserService {
     UserResponseDto addReview(String email, ReviewDto reviewDto);
 
     UserResponseDto getUserByEmail(String email);
+
+    UserResponseDto getCurrentUser();
 }

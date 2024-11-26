@@ -1,5 +1,6 @@
 package ait.cohort46.user.dto;
 
+import ait.cohort46.review.model.Review;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,7 +17,7 @@ public class UserResponseDto {
     private String firstName;
     private String lastName;
     private String email;
-    private List<String> reviews;
+    private List<Review> reviews;
     private String photo;
     private String description;
 }

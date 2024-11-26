@@ -10,5 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ReviewDto {
+    private String reviewerEmail;
     private String message;
+    private int stars;
 }

@@ -4,6 +4,7 @@ import ait.cohort46.booking.dao.BookingRepository;
 import ait.cohort46.booking.dto.CreateBookingDto;
 import ait.cohort46.booking.dto.NewStatusBooking;
 import ait.cohort46.booking.dto.ResponseBookingDto;
+import ait.cohort46.booking.dto.ResponseStatusBookingDto;
 import ait.cohort46.booking.dto.exception.BookingInvalidStatusException;
 import ait.cohort46.booking.dto.exception.BookingNotFoundException;
 import ait.cohort46.booking.model.Booking;
@@ -52,38 +53,41 @@ public class BookingServiceImpl implements BookingService {
         ResponseBookingDto responseBookingDto = modelMapper.map(booking, ResponseBookingDto.class);
         responseBookingDto.setServiceId(service.getId());
         responseBookingDto.setPetId(pet.getId());
+        responseBookingDto.setPrice(service.getPrice());
         return responseBookingDto;
     }
 
     @Override
-    public ResponseBookingDto changeStatusBooking(Long id, NewStatusBooking newStatusBooking) {
+    public ResponseStatusBookingDto changeStatusBooking(Long id, NewStatusBooking newStatusBooking) {
         Booking booking = bookingRepository.findById(id).orElseThrow(BookingNotFoundException::new);
+        //изменить статус брони можно только если текущий статус pending
+        if (booking.getStatus().equals("pending")) {
+            // Получаем информацию о текущем аутентифицированном пользователе
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String currentUsername = authentication.getName(); // Получаем имя пользователя из аутентификационных данных
+            User user = userRepository.findByEmail(currentUsername)
+                    .orElseThrow(UserExistsException::new);
 
-        // Получаем информацию о текущем аутентифицированном пользователе
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentUsername = authentication.getName(); // Получаем имя пользователя из аутентификационных данных
-        User user = userRepository.findByEmail(currentUsername)
-                .orElseThrow(UserExistsException::new);
+            User owner = booking.getPet().getUser();
+            User sitter = booking.getService().getUser();
 
-        User owner = booking.getPet().getUser();
-        User sitter = booking.getService().getUser();
+            //эти статусы может присвоить только ситтер, который указан в сервисе
+            if (user.equals(sitter) && (newStatusBooking.getStatus().equals("rejected") || newStatusBooking.getStatus().equals("confirmed"))) {
+                booking.setStatus(newStatusBooking.getStatus());
+                booking = bookingRepository.save(booking);
+            } else { //отменить бронь может только владелец - инициатор брони
+                if (user.equals(owner) && newStatusBooking.getStatus().equals("cancelled")) {
+                    booking.setStatus(newStatusBooking.getStatus());
+                    booking = bookingRepository.save(booking);
+                } else {
+                    throw new BookingInvalidStatusException();
+                }
+            }
 
-        //эти статусы может присвоить только ситтер, который указан в сервисе
-        if (user.equals(sitter) && (newStatusBooking.getStatus().equals("rejected") || newStatusBooking.getStatus().equals("confirmed"))) {
-            booking.setStatus(newStatusBooking.getStatus());
-            booking = bookingRepository.save(booking);
+            return modelMapper.map(booking, ResponseStatusBookingDto.class);
         } else {
             throw new BookingInvalidStatusException();
         }
-
-        if (user.equals(owner) && newStatusBooking.getStatus().equals("cancelled")) {
-            booking.setStatus(newStatusBooking.getStatus());
-            booking = bookingRepository.save(booking);
-        } else {
-            throw new BookingInvalidStatusException();
-        }
-
-        return modelMapper.map(booking, ResponseBookingDto.class);
     }
 
     @Override

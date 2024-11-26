@@ -3,6 +3,7 @@ package ait.cohort46.booking.controller;
 import ait.cohort46.booking.dto.CreateBookingDto;
 import ait.cohort46.booking.dto.NewStatusBooking;
 import ait.cohort46.booking.dto.ResponseBookingDto;
+import ait.cohort46.booking.dto.ResponseStatusBookingDto;
 import ait.cohort46.booking.service.BookingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +19,7 @@ public class BookingController {
     }
 
     @PatchMapping("/bookings/{id}")
-    public ResponseBookingDto changeStatusBooking(@PathVariable Long id, @RequestBody NewStatusBooking newStatusBooking) {
+    public ResponseStatusBookingDto changeStatusBooking(@PathVariable Long id, @RequestBody NewStatusBooking newStatusBooking) {
         return bookingService.changeStatusBooking(id, newStatusBooking);
     }
 

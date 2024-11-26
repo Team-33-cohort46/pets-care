@@ -44,6 +44,11 @@ public class UserController {
         return userService.getUserByEmail(email);
     }
 
+    @GetMapping("/me")
+    public UserResponseDto getCurrentUser() {
+        return userService.getCurrentUser();
+    }
+
     @DeleteMapping("/me/{email}")
     public Boolean deleteUser(@PathVariable String email) {
         return userService.deleteUser(email);

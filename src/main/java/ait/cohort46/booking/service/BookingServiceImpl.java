@@ -23,6 +23,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+
 @Service
 @RequiredArgsConstructor
 public class BookingServiceImpl implements BookingService {
@@ -36,6 +39,13 @@ public class BookingServiceImpl implements BookingService {
     @Transactional
     @Override
     public ResponseBookingDto addBooking(CreateBookingDto createBookingDto) {
+        //проверить, что дата окончания больше даты начала
+        LocalDate dateStart = createBookingDto.getStartDate();
+        LocalDate dateEnd = createBookingDto.getEndDate();
+        long daysBetween = ChronoUnit.DAYS.between(dateStart, dateEnd) + 1;
+        if (daysBetween < 1) {throw new BookingInvalidStatusException();}
+
+        //возвращать стоимость бронирования как прайс*дни, добавить стоимость бронирования в модель
         ait.cohort46.petscare.model.Service service = serviceRepository.findById(createBookingDto.getServiceId())
                 .orElseThrow(ServiceNotFoundException::new);
         Pet pet = petRepository.findById(createBookingDto.getPetId())
@@ -47,13 +57,15 @@ public class BookingServiceImpl implements BookingService {
                 .startDate(createBookingDto.getStartDate())
                 .endDate(createBookingDto.getEndDate())
                 .status("pending")
+                .price(service.getPrice() * daysBetween)
                 .build();
 
         booking = bookingRepository.save(booking);
         ResponseBookingDto responseBookingDto = modelMapper.map(booking, ResponseBookingDto.class);
         responseBookingDto.setServiceId(service.getId());
         responseBookingDto.setPetId(pet.getId());
-        responseBookingDto.setPrice(service.getPrice());
+        responseBookingDto.setOwnerId(service.getUser().getId());
+        responseBookingDto.setSitterId(pet.getUser().getId());
         return responseBookingDto;
     }
 
@@ -61,7 +73,8 @@ public class BookingServiceImpl implements BookingService {
     public ResponseStatusBookingDto changeStatusBooking(Long id, NewStatusBooking newStatusBooking) {
         Booking booking = bookingRepository.findById(id).orElseThrow(BookingNotFoundException::new);
         //изменить статус брони можно только если текущий статус pending
-        if (booking.getStatus().equals("pending")) {
+        //или confirmed, но это пока не точно
+        if (booking.getStatus().equals("pending") || booking.getStatus().equals("confirmed")) {
             // Получаем информацию о текущем аутентифицированном пользователе
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String currentUsername = authentication.getName(); // Получаем имя пользователя из аутентификационных данных
@@ -93,7 +106,15 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public ResponseBookingDto getBooking(Long bookingId) {
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(BookingNotFoundException::new);
-        return modelMapper.map(booking, ResponseBookingDto.class);
+        Pet pet = petRepository.findById(booking.getPet().getId())
+                .orElseThrow(() -> new EntityNotFoundException("Pet not found"));
+        ait.cohort46.petscare.model.Service service = serviceRepository.findById(booking.getService().getId())
+                .orElseThrow(ServiceNotFoundException::new);
+
+        ResponseBookingDto response = modelMapper.map(booking, ResponseBookingDto.class);
+        response.setOwnerId(pet.getUser().getId());
+        response.setSitterId(service.getUser().getId());
+        return response;
     }
 
 }

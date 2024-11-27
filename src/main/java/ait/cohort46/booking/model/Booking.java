@@ -28,6 +28,8 @@ public class Booking implements Serializable {
     @Column(nullable = false)
     private LocalDate startDate;
 
+    private Double price;
+
     @Column(nullable = false)
     private LocalDate endDate;
 

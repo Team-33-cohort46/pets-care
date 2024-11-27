@@ -19,6 +19,8 @@ public class ResponseBookingDto {
     private String status;
     private Long serviceId;
     private Long petId;
+    private Long sitterId;
+    private Long ownerId;
     private Double price;
     private LocalDate startDate;
     private LocalDate endDate;

@@ -18,6 +18,7 @@ public class UserResponseDto {
     private String lastName;
     private String email;
     private List<Review> reviews;
+    private double averageStars;
     private String photo;
     private String description;
 }

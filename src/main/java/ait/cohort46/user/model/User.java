@@ -2,6 +2,7 @@ package ait.cohort46.user.model;
 
 import ait.cohort46.review.model.Review;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import lombok.*;
 
 import java.io.Serializable;
@@ -25,7 +26,9 @@ public class User implements Serializable {
     @Column(nullable = false)
     private String lastName;
 
-    @Setter@Column(unique = true, nullable = false)
+    @Setter
+    @Column(unique = true, nullable = false)
+//    @Email
     private String email;
 
     @Setter
@@ -45,6 +48,9 @@ public class User implements Serializable {
     @OneToMany
     private List<Review> reviews;
 
+    @Setter
+    private double averageStars;
+
 //    @ElementCollection
 //    @CollectionTable(name = "user_reviews", joinColumns = @JoinColumn(name = "user_id"))
 //    @Column(name = "review")
@@ -52,6 +58,15 @@ public class User implements Serializable {
 
     public void addReview(Review review) {
         reviews.add(review);
+        updateAverageStars();
+    }
+
+    public void updateAverageStars() {
+        int totalStars = 0;
+        for (Review review : reviews) {
+            totalStars += review.getStars();
+        }
+        averageStars = reviews.isEmpty() ? 0 : (double) totalStars / reviews.size();
     }
 
     public void setDeleted(Boolean deleted) {

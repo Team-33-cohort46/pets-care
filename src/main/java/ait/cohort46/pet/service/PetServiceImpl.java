@@ -1,5 +1,7 @@
 package ait.cohort46.pet.service;
 
+import ait.cohort46.booking.dao.BookingRepository;
+import ait.cohort46.booking.model.Booking;
 import ait.cohort46.pet.dao.PetRepository;
 import ait.cohort46.pet.dto.PetRequestDto;
 import ait.cohort46.pet.dto.PetResponseDto;
@@ -12,9 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import ait.cohort46.user.dto.exception.UserExistsException;
-
-import java.util.Collections;
-import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +22,8 @@ public class PetServiceImpl implements PetService {
 private final UserRepository userRepository;
 private final PetRepository petRepository;
 private final ModelMapper modelMapper;
+private final BookingRepository bookingRepository;
+
     @Override
     public PetResponseDto createPet(PetRequestDto petRequestDto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -35,6 +37,18 @@ private final ModelMapper modelMapper;
                 .build();
         petRepository.save(pet);
         return modelMapper.map(pet, PetResponseDto.class);
+    }
+
+    @Override
+    public void deletePet(Long id) {
+        Pet pet = petRepository.findById(id).orElseThrow(UserExistsException::new);
+        Booking booking = bookingRepository.findBookingByPetId(pet.getId());
+        if (Objects.equals(booking.getStatus(), "cancelled")) {
+            pet.setDeleted(true);
+            petRepository.save(pet);
+        }else {
+            System.out.println("U have existing booking with this pet");
+        }
     }
 
 //    @Override

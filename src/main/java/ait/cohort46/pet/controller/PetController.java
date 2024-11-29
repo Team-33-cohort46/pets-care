@@ -35,4 +35,9 @@ public class PetController {
         User user = userRepository.findByEmailAndIsDeletedFalse(email).orElseThrow(UserExistsException::new);
         return petRepository.findPetsByUserId(user.getId());
     }
+
+    @DeleteMapping("/me/{id}")
+    public void deletePet(@PathVariable long id) {
+        petService.deletePet(id);
+    }
 }

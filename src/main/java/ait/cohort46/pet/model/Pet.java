@@ -19,6 +19,9 @@ public class Pet {
     private String photo;
     @ManyToOne
     private User user;
+    private boolean isDeleted = false;
 
-
+    public void setDeleted(Boolean deleted) {
+        isDeleted = deleted;
+    }
 }

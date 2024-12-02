@@ -20,8 +20,10 @@ public class SecurityConfiguration {
         http.authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/auth/login", "/auth/register", "/services_categories", "/auth/register/restore").permitAll()
                         .requestMatchers(HttpMethod.GET, "/services").permitAll()
+                        .requestMatchers("/admin/services_categories")
+                        .access(new WebExpressionAuthorizationManager("authentication.name == 'admin@admin.com'"))
                         .requestMatchers(HttpMethod.DELETE, "/auth/me/{email}")
-                        .access(new WebExpressionAuthorizationManager("#email == authentication.name"))
+                        .access(new WebExpressionAuthorizationManager("(#email == authentication.name) or (authentication.name == 'admin@admin.com')"))
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(new JwtAuthenticationFilter(new JwtUtils()), UsernamePasswordAuthenticationFilter.class);

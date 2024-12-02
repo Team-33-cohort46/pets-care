@@ -132,8 +132,13 @@ public class PetsCareServiceImpl implements PetsCareService {
 
     @Transactional
     @Override
-    public Iterable<ResponseServiceDto> getSitterServices(Long id) {
-        try (Stream<ait.cohort46.petscare.model.Service> services = serviceRepository.findByUserId(id)) {
+    public Iterable<ResponseServiceDto> getSitterServices() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = authentication.getName();
+        User user = userRepository.findByEmail(currentUsername)
+                .orElseThrow(UserExistsException::new);
+
+        try (Stream<ait.cohort46.petscare.model.Service> services = serviceRepository.findByUserId(user.getId())) {
             return services
                     .map(s -> modelMapper.map(s, ResponseServiceDto.class))
                     .toList();

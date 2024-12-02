@@ -51,10 +51,10 @@ public class PetsCareController {
     }
 
     // api/services?sitterId={id}
-//    @GetMapping("/services")
-//    public Iterable<ResponseServiceDto> getSitterServices(@RequestParam("sitterId") Long id) {
-//        return petsCareService.getSitterServices(id);
-//    }
+    @GetMapping("/services/me")
+    public Iterable<ResponseServiceDto> getSitterServices() {
+        return petsCareService.getSitterServices();
+    }
 
     @GetMapping("/services")
     public Page<ResponseServiceDto> getAllServices(

@@ -20,7 +20,7 @@ public interface PetsCareService {
 
     ServiceDTO deleteService(Long id);
 
-    Iterable<ResponseServiceDto> getSitterServices(Long id);
+    Iterable<ResponseServiceDto> getSitterServices();
 
     Page<ResponseServiceDto> getServicesByCategory(Long categoryId, Pageable pageable);
 

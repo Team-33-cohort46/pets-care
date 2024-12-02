@@ -1,12 +1,18 @@
 package ait.cohort46.petscare.service;
 
 import ait.cohort46.petscare.dto.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 
 public interface PetsCareService {
     Iterable<ServiceCategoryDTO> getServiceCategories();
 
     ServiceCategoryDTO addServiceCategory(NewServiceCategoryDto newServiceCategoryDto);
+
+    ServiceCategoryDTO deleteServiceCategory(Integer id);
+
+    ServiceCategoryDTO updateServiceCategory(Integer id, NewServiceCategoryDto newServiceCategoryDto);
 
     ServiceDTO addNewService(NewServiceDto newServiceDto);
 
@@ -15,4 +21,8 @@ public interface PetsCareService {
     ServiceDTO deleteService(Long id);
 
     Iterable<ResponseServiceDto> getSitterServices(Long id);
+
+    Page<ResponseServiceDto> getServicesByCategory(Long categoryId, Pageable pageable);
+
+    Page<ResponseServiceDto> getAllServices(Pageable pageable);
 }

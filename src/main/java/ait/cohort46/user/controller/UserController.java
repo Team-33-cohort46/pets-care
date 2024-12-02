@@ -14,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
 
 @RestController
 @RequestMapping("/auth")
@@ -67,6 +68,11 @@ public class UserController {
     @PatchMapping("/user/{email}")
     public UserResponseDto addReview(@PathVariable String email, @RequestBody ReviewDto reviewDto) {
         return userService.addReview(email, reviewDto);
+    }
+
+    @GetMapping("/me/reviews")
+    public List<ReviewDto> getReviews(){
+        return userService.getReviews();
     }
 
 //    @PostMapping("/pet/register/{user_id}")

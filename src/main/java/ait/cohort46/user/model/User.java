@@ -3,6 +3,7 @@ package ait.cohort46.user.model;
 import ait.cohort46.review.model.Review;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.io.Serializable;
@@ -20,19 +21,23 @@ public class User implements Serializable {
 
     @Setter
     @Column(nullable = false)
+    @NotBlank
     private String firstName;
 
     @Setter
     @Column(nullable = false)
+    @NotBlank
     private String lastName;
 
     @Setter
     @Column(unique = true, nullable = false)
+    @NotBlank
 //    @Email
     private String email;
 
     @Setter
     @Column(nullable = false)
+    @NotBlank
     private String password;
 
     @Setter

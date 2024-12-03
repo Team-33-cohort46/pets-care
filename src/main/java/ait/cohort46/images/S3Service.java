@@ -28,7 +28,6 @@ public class S3Service {
             s3Client.putObject(PutObjectRequest.builder()
                             .bucket(bucketName)
                             .key(fileName)
-                            //.acl(ObjectCannedACL.PUBLIC_READ)
                             .build(),
                     software.amazon.awssdk.core.sync.RequestBody.fromBytes(file.getBytes()));
         } catch (IOException e) {

@@ -114,9 +114,9 @@ public class PetsCareServiceImpl implements PetsCareService {
             }
             service.setPrice(updateServiceDto.getPrice());
         }
-        if (updateServiceDto.getPhoto() != null) {
-            service.setPhoto(updateServiceDto.getPhoto());
-        }
+//        if (updateServiceDto.getPhoto() != null) {
+//            service.setPhoto(updateServiceDto.getPhoto());
+//        }
         serviceRepository.save(service);
         return modelMapper.map(service, ServiceDTO.class);
     }

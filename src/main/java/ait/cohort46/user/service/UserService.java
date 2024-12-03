@@ -14,8 +14,6 @@ public interface UserService {
 
     Boolean changePassword(Long user_id, String oldPassword, String newPassword);
 
-    void restoreUser(UserRestoreDto userRestoreDto);
-
     UserResponseDto addReview(String email, ReviewDto reviewDto);
 
     UserResponseDto getUserByEmail(String email);

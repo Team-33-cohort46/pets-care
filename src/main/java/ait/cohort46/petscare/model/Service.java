@@ -28,7 +28,7 @@ public class Service implements Serializable {
     @Column(nullable = false)
     private double price;
 
-    private String photo;
+    // private String photo;
 
     @ManyToOne
     private ServiceCategory serviceCategory;

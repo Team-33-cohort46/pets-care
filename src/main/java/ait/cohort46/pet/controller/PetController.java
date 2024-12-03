@@ -9,6 +9,7 @@ import ait.cohort46.user.dao.UserRepository;
 import ait.cohort46.user.dto.exception.UserExistsException;
 import ait.cohort46.user.model.User;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +23,7 @@ public class PetController {
     private final UserRepository userRepository;
     private final PetService petService;
     private final PetRepository petRepository;
+    private final ModelMapper modelMapper;
 
     @PostMapping()
     public PetResponseDto createPet(@RequestBody PetRequestDto petRequestDto) {
@@ -29,11 +31,15 @@ public class PetController {
     }
 
     @GetMapping("/me")
-    public List<Pet> getAllPets() {
+    public List<PetResponseDto> getAllPets() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         User user = userRepository.findByEmailAndIsDeletedFalse(email).orElseThrow(UserExistsException::new);
-        return petRepository.findPetsByUserId(user.getId());
+        List<PetResponseDto> pets = petRepository.findPetsByUserId(user.getId())
+                .stream()
+                .map(pet -> modelMapper.map(pet, PetResponseDto.class))
+                .toList();
+        return pets;
     }
 
     @DeleteMapping("/me/{id}")

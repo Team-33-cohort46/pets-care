@@ -13,9 +13,12 @@ import ait.cohort46.user.model.User;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
 import java.util.stream.Stream;
 
 
@@ -42,6 +45,27 @@ public class PetsCareServiceImpl implements PetsCareService {
                 .build();
         ServiceCategory savedServiceCategory = serviceCategoryRepository.save(serviceCategory);
         return modelMapper.map(savedServiceCategory, ServiceCategoryDTO.class);
+    }
+
+    @Transactional
+    @Override
+    public ServiceCategoryDTO deleteServiceCategory(Integer id) {
+        ServiceCategory category = serviceCategoryRepository.findById(id)
+                .orElseThrow(ServiceCategoryNotFoundException::new);
+         serviceCategoryRepository.delete(category);
+        return modelMapper.map(category, ServiceCategoryDTO.class);
+    }
+
+    @Transactional
+    @Override
+    public ServiceCategoryDTO updateServiceCategory(Integer id, NewServiceCategoryDto newServiceCategoryDto) {
+        ServiceCategory category = serviceCategoryRepository.findById(id)
+                .orElseThrow(ServiceCategoryNotFoundException::new);
+        if (newServiceCategoryDto.getTitle() != null) {
+            category.setTitle(newServiceCategoryDto.getTitle());
+        }
+        category = serviceCategoryRepository.save(category);
+        return modelMapper.map(category, ServiceCategoryDTO.class);
     }
 
     @Transactional
@@ -108,12 +132,30 @@ public class PetsCareServiceImpl implements PetsCareService {
 
     @Transactional
     @Override
-    public Iterable<ResponseServiceDto> getSitterServices(Long id) {
-        try (Stream<ait.cohort46.petscare.model.Service> services = serviceRepository.findByUserId(id)) {
+    public Iterable<ResponseServiceDto> getSitterServices() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = authentication.getName();
+        User user = userRepository.findByEmail(currentUsername)
+                .orElseThrow(UserExistsException::new);
+
+        try (Stream<ait.cohort46.petscare.model.Service> services = serviceRepository.findByUserId(user.getId())) {
             return services
                     .map(s -> modelMapper.map(s, ResponseServiceDto.class))
                     .toList();
         }
+    }
+
+    @Override
+    public Page<ResponseServiceDto> getServicesByCategory(Long categoryId, Pageable pageable) {
+        Page<ait.cohort46.petscare.model.Service> servicesPage =
+                serviceRepository.findByServiceCategoryId(categoryId, pageable);
+        return servicesPage.map(service -> modelMapper.map(service, ResponseServiceDto.class));
+    }
+
+    @Override
+    public Page<ResponseServiceDto> getAllServices(Pageable pageable) {
+        Page<ait.cohort46.petscare.model.Service> servicesPage = serviceRepository.findAll(pageable);
+        return servicesPage.map(service -> modelMapper.map(service, ResponseServiceDto.class));
     }
 
 

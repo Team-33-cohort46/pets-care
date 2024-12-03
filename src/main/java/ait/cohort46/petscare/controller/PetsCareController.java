@@ -3,6 +3,9 @@ package ait.cohort46.petscare.controller;
 import ait.cohort46.petscare.dto.*;
 import ait.cohort46.petscare.service.PetsCareService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,6 +25,16 @@ public class PetsCareController {
         return petsCareService.addServiceCategory(newServiceCategoryDto);
     }
 
+    @DeleteMapping("/admin/services_categories/{id}")
+    public ServiceCategoryDTO deleteServiceCategory(@PathVariable Integer id) {
+        return petsCareService.deleteServiceCategory(id);
+    }
+
+    @PatchMapping("/admin/services_categories/{id}")
+    public ServiceCategoryDTO updateServiceCategory(@PathVariable Integer id, @RequestBody NewServiceCategoryDto newServiceCategoryDto) {
+        return petsCareService.updateServiceCategory(id, newServiceCategoryDto);
+    }
+
     @PostMapping("/services")
     public ServiceDTO addNewService(@RequestBody NewServiceDto newServiceDto) {
         return petsCareService.addNewService(newServiceDto);
@@ -37,9 +50,23 @@ public class PetsCareController {
         return petsCareService.deleteService(id);
     }
 
-///api/services?sitterId={id}
-    @GetMapping("/services")
-    public Iterable<ResponseServiceDto> getSitterServices(@RequestParam("sitterId") Long id) {
-        return petsCareService.getSitterServices(id);
+    // api/services?sitterId={id}
+    @GetMapping("/services/me")
+    public Iterable<ResponseServiceDto> getSitterServices() {
+        return petsCareService.getSitterServices();
     }
+
+    @GetMapping("/services")
+    public Page<ResponseServiceDto> getAllServices(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) Long categoryId) {
+        Pageable pageable = PageRequest.of(page, size);
+        if (categoryId != null) {
+            // Если передан categoryId, возвращаем отфильтрованные данные
+            return petsCareService.getServicesByCategory(categoryId, pageable);
+        }
+        return petsCareService.getAllServices(pageable);
+    }
+
 }

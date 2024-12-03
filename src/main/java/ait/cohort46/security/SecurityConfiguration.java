@@ -19,6 +19,7 @@ public class SecurityConfiguration {
         http.csrf(csrf -> csrf.disable());
         http.authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/auth/login", "/auth/register", "/services_categories", "/auth/register/restore").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/services").permitAll()
                         .requestMatchers("/admin/services_categories")
                         .access(new WebExpressionAuthorizationManager("authentication.name == 'admin@admin.com'"))
                         .requestMatchers(HttpMethod.DELETE, "/auth/me/{email}")

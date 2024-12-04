@@ -3,6 +3,8 @@ package ait.cohort46.user.service;
 import ait.cohort46.review.dto.ReviewDto;
 import ait.cohort46.user.dto.*;
 
+import java.util.List;
+
 public interface UserService {
     UserResponseDto createUser(UserRequestDto userRequestDto);
 
@@ -19,4 +21,6 @@ public interface UserService {
     UserResponseDto getUserByEmail(String email);
 
     UserResponseDto getCurrentUser();
+
+    List<ReviewDto> getReviews();
 }

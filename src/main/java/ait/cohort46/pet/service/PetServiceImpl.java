@@ -42,13 +42,15 @@ private final BookingRepository bookingRepository;
     @Override
     public void deletePet(Long id) {
         Pet pet = petRepository.findById(id).orElseThrow(UserExistsException::new);
-        Booking booking = bookingRepository.findBookingByPetId(pet.getId());
-        if (Objects.equals(booking.getStatus(), "cancelled")) {
-            pet.setDeleted(true);
-            petRepository.save(pet);
-        }else {
-            System.out.println("U have existing booking with this pet");
-        }
+        pet.setDeleted(true);
+        petRepository.save(pet);
+//        Booking booking = bookingRepository.findBookingByPetId(pet.getId());
+//        if (Objects.equals(booking.getStatus(), "cancelled")) {
+//            pet.setDeleted(true);
+//            petRepository.save(pet);
+//        }else {
+//            System.out.println("U have existing booking with this pet");
+//        }
     }
 
 //    @Override

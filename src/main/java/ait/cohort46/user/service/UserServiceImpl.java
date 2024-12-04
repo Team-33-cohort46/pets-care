@@ -15,6 +15,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -58,6 +60,18 @@ public class UserServiceImpl implements UserService {
         String email = authentication.getName();
         User user = userRepository.findByEmailAndIsDeletedFalse(email).orElseThrow(UserExistsException::new);
         return modelMapper.map(user, UserResponseDto.class);
+    }
+
+    @Override
+    public List<ReviewDto> getReviews() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        User user = userRepository.findByEmailAndIsDeletedFalse(email).orElseThrow(UserExistsException::new);
+        List<ReviewDto> reviews = user.getReviews()
+                .stream()
+                .map(review -> modelMapper.map(review, ReviewDto.class))
+                .toList();
+        return reviews;
     }
 
     @Override
@@ -119,8 +133,6 @@ public class UserServiceImpl implements UserService {
         reviewRepository.save(review);
         return modelMapper.map(userRepository.save(recipient), UserResponseDto.class);
     }
-
-
 
 
 }

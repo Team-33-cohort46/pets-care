@@ -16,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
@@ -24,12 +25,16 @@ public class UserServiceImpl implements UserService {
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
     private final ReviewRepository reviewRepository;
+    private static final String PASSWORD_REGEX = "^(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*(),.?\":{}|<>])[A-Za-z\\d!@#$%^&*(),.?\":{}|<>]{8,}$";
 
     @Override
     @Transactional
     public UserResponseDto createUser(UserRequestDto userRequestDto) {
         if (userRepository.findByEmail(userRequestDto.getEmail()).isPresent()) {
             throw new UserExistsException();
+        }
+        if (!isValidPassword(userRequestDto.getPassword())) {
+            throw new IllegalArgumentException("Invalid password");
         }
         String password = passwordEncoder.encode(userRequestDto.getPassword());
         User user = User.builder()
@@ -106,17 +111,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void restoreUser(UserRestoreDto userRestoreDto) {
-        User user = userRepository.findByEmail(userRestoreDto.getEmail()).orElseThrow(UserExistsException::new);
-        if (!user.getIsDeleted()) {
-            throw new RuntimeException("User is not deleted");
-        }
-        user.setPassword(passwordEncoder.encode(userRestoreDto.getPassword()));
-        user.setDeleted(false);
-        userRepository.save(user);
-    }
-
-    @Override
     public UserResponseDto addReview(String email, ReviewDto reviewDto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String reviewerEmail = authentication.getName();
@@ -132,6 +126,10 @@ public class UserServiceImpl implements UserService {
         recipient.addReview(review);
         reviewRepository.save(review);
         return modelMapper.map(userRepository.save(recipient), UserResponseDto.class);
+    }
+
+    private boolean isValidPassword(String password) {
+        return Pattern.matches(PASSWORD_REGEX, password);
     }
 
 

@@ -56,8 +56,15 @@ public class UserController {
     }
 
     @PostMapping("/register/restore")
-        public void restoreUser(@RequestBody UserRestoreDto userRestoreDto) {
-        userService.restoreUser(userRestoreDto);
+        public ResponseEntity<String> restoreUser(@RequestBody UserRestoreDto userRestoreDto) {
+        User user = userRepository.findByEmail(userRestoreDto.getEmail()).orElseThrow(UserExistsException::new);
+        if (!user.getIsDeleted()) {
+            throw new RuntimeException("User is not deleted");
+        }
+        user.setPassword(passwordEncoder.encode(userRestoreDto.getPassword()));
+        user.setDeleted(false);
+        userRepository.save(user);
+        return ResponseEntity.ok("Аккаунт успешно восстановлен");
     }
 
     @PutMapping("/me")

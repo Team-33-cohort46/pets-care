@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: mysql://${DB_USERNAME}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}?ssl-mode=REQUIRED
+    url: jdbc:mysql://${DB_USERNAME}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}?ssl-mode=REQUIRED
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
   jpa:

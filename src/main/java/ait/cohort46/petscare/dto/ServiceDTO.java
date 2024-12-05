@@ -1,15 +1,13 @@
 package ait.cohort46.petscare.dto;
 
 import ait.cohort46.user.dto.UserRequestDto;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class ServiceDTO {
     private Long id;
     private UserRequestDto user;

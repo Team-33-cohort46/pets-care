@@ -1,13 +1,10 @@
-package ait.cohort46;
+package ait.cohort46.servicestests;
 
-import ait.cohort46.booking.dao.BookingRepository;
 import ait.cohort46.pet.dao.PetRepository;
 import ait.cohort46.pet.dto.PetRequestDto;
-import ait.cohort46.pet.dto.PetResponseDto;
 import ait.cohort46.pet.model.Pet;
 import ait.cohort46.pet.service.PetServiceImpl;
 import ait.cohort46.user.dao.UserRepository;
-import ait.cohort46.user.model.User;
 import ait.cohort46.user.dto.exception.UserExistsException;
 import ait.cohort46.utils.JwtUtils;
 import org.junit.jupiter.api.BeforeEach;

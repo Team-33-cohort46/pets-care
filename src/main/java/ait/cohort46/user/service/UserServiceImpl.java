@@ -80,6 +80,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<ReviewDto> getUsersReviews(String email) {
+        User user = userRepository.findByEmailAndIsDeletedFalse(email).orElseThrow(UserExistsException::new);
+        List<ReviewDto> reviews = user.getReviews()
+                .stream()
+                .map(review -> modelMapper.map(review, ReviewDto.class))
+                .toList();
+        return reviews;
+    }
+
+    @Override
     @Transactional
     public Boolean deleteUser(String email) {
         User user = userRepository.findByEmail(email).orElseThrow(UserExistsException::new);

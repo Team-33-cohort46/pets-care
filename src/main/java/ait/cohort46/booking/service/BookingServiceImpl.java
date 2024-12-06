@@ -1,10 +1,7 @@
 package ait.cohort46.booking.service;
 
 import ait.cohort46.booking.dao.BookingRepository;
-import ait.cohort46.booking.dto.CreateBookingDto;
-import ait.cohort46.booking.dto.NewStatusBooking;
-import ait.cohort46.booking.dto.ResponseBookingDto;
-import ait.cohort46.booking.dto.ResponseStatusBookingDto;
+import ait.cohort46.booking.dto.*;
 import ait.cohort46.booking.dto.exception.BookingInvalidStatusException;
 import ait.cohort46.booking.dto.exception.BookingNotFoundException;
 import ait.cohort46.booking.model.Booking;
@@ -13,6 +10,7 @@ import ait.cohort46.pet.model.Pet;
 import ait.cohort46.petscare.dao.ServiceRepository;
 import ait.cohort46.petscare.dto.exception.ServiceNotFoundException;
 import ait.cohort46.user.dao.UserRepository;
+import ait.cohort46.user.dto.UserResponseDto;
 import ait.cohort46.user.dto.exception.UserExistsException;
 import ait.cohort46.user.model.User;
 import jakarta.persistence.EntityNotFoundException;
@@ -25,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -43,7 +42,9 @@ public class BookingServiceImpl implements BookingService {
         LocalDate dateStart = createBookingDto.getStartDate();
         LocalDate dateEnd = createBookingDto.getEndDate();
         long daysBetween = ChronoUnit.DAYS.between(dateStart, dateEnd) + 1;
-        if (daysBetween < 1) {throw new BookingInvalidStatusException();}
+        if (daysBetween < 1) {
+            throw new BookingInvalidStatusException();
+        }
 
         //возвращать стоимость бронирования как прайс*дни, добавить стоимость бронирования в модель
         ait.cohort46.petscare.model.Service service = serviceRepository.findById(createBookingDto.getServiceId())
@@ -117,4 +118,45 @@ public class BookingServiceImpl implements BookingService {
         return response;
     }
 
+    @Override
+    public Iterable<BookingDto> getBookingsAsOwner() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = authentication.getName();
+        User user = userRepository.findByEmail(currentUsername)
+                .orElseThrow(UserExistsException::new);
+
+        // Находим брони, где пользователь является владельцем питомца
+        List<Booking> bookings = bookingRepository.findAllByOwner(user.getId());
+        return bookings.stream()
+                .map(booking -> {
+                    BookingDto response = modelMapper.map(booking, BookingDto.class);
+                    response.setServiceTitle(booking.getService().getTitle());
+                    response.setPetName(booking.getPet().getName());
+                    response.setOwner(modelMapper.map(user, UserResponseDto.class));
+                    response.setSitter(modelMapper.map(booking.getService().getUser(), UserResponseDto.class));
+                    return response;
+                })
+                .toList();
+    }
+
+    @Override
+    public Iterable<BookingDto> getBookingsAsSitter() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = authentication.getName();
+        User user = userRepository.findByEmail(currentUsername)
+                .orElseThrow(UserExistsException::new);
+
+        // Находим брони, где пользователь является ситтером
+        List<Booking> bookings = bookingRepository.findAllBySitter(user.getId());
+        return bookings.stream()
+                .map(booking -> {
+                    BookingDto response = modelMapper.map(booking, BookingDto.class);
+                    response.setServiceTitle(booking.getService().getTitle());
+                    response.setPetName(booking.getPet().getName());
+                    response.setSitter(modelMapper.map(user, UserResponseDto.class));
+                    response.setOwner(modelMapper.map(booking.getPet().getUser(), UserResponseDto.class));
+                    return response;
+                })
+                .toList();
+    }
 }

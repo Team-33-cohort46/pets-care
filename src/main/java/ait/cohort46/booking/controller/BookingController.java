@@ -1,9 +1,6 @@
 package ait.cohort46.booking.controller;
 
-import ait.cohort46.booking.dto.CreateBookingDto;
-import ait.cohort46.booking.dto.NewStatusBooking;
-import ait.cohort46.booking.dto.ResponseBookingDto;
-import ait.cohort46.booking.dto.ResponseStatusBookingDto;
+import ait.cohort46.booking.dto.*;
 import ait.cohort46.booking.service.BookingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -29,5 +26,13 @@ public class BookingController {
         return bookingService.getBooking(id);
     }
 
+    @GetMapping("/bookings/as-owner")
+    public Iterable<BookingDto> getBookingsAsOwner() {
+        return bookingService.getBookingsAsOwner();
+    }
 
+    @GetMapping("/bookings/as-sitter")
+    public Iterable<BookingDto> getBookingsAsSitter() {
+        return bookingService.getBookingsAsSitter();
+    }
 }

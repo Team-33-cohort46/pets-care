@@ -1,5 +1,6 @@
 package ait.cohort46.booking.dto;
 
+import ait.cohort46.user.dto.UserResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,13 +12,13 @@ import java.time.LocalDate;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ResponseBookingDto {
+public class BookingDto {
     private Long id;
     private String status;
-    private Long serviceId;
-    private Long petId;
-    private Long sitterId;
-    private Long ownerId;
+    private String serviceTitle;
+    private String petName;
+    private UserResponseDto sitter;
+    private UserResponseDto owner;
     private Double price;
     private LocalDate startDate;
     private LocalDate endDate;

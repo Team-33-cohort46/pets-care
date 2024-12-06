@@ -1,19 +1,16 @@
 package ait.cohort46.booking.service;
 
 import ait.cohort46.booking.dao.BookingRepository;
-import ait.cohort46.booking.dto.CreateBookingDto;
-import ait.cohort46.booking.dto.NewStatusBooking;
-import ait.cohort46.booking.dto.ResponseBookingDto;
-import ait.cohort46.booking.dto.ResponseStatusBookingDto;
+import ait.cohort46.booking.dto.*;
 import ait.cohort46.booking.dto.exception.BookingInvalidStatusException;
 import ait.cohort46.booking.dto.exception.BookingNotFoundException;
 import ait.cohort46.booking.model.Booking;
 import ait.cohort46.pet.dao.PetRepository;
 import ait.cohort46.pet.model.Pet;
 import ait.cohort46.petscare.dao.ServiceRepository;
-import ait.cohort46.petscare.dto.ResponseServiceDto;
 import ait.cohort46.petscare.dto.exception.ServiceNotFoundException;
 import ait.cohort46.user.dao.UserRepository;
+import ait.cohort46.user.dto.UserResponseDto;
 import ait.cohort46.user.dto.exception.UserExistsException;
 import ait.cohort46.user.model.User;
 import jakarta.persistence.EntityNotFoundException;
@@ -27,7 +24,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -123,7 +119,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public Iterable<ResponseBookingDto> getBookingsAsOwner() {
+    public Iterable<BookingDto> getBookingsAsOwner() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUsername = authentication.getName();
         User user = userRepository.findByEmail(currentUsername)
@@ -133,16 +129,18 @@ public class BookingServiceImpl implements BookingService {
         List<Booking> bookings = bookingRepository.findAllByOwner(user.getId());
         return bookings.stream()
                 .map(booking -> {
-                    ResponseBookingDto response = modelMapper.map(booking, ResponseBookingDto.class);
-                    response.setOwnerId(user.getId());
-                    response.setSitterId(booking.getService().getUser().getId());
+                    BookingDto response = modelMapper.map(booking, BookingDto.class);
+                    response.setServiceTitle(booking.getService().getTitle());
+                    response.setPetName(booking.getPet().getName());
+                    response.setOwner(modelMapper.map(user, UserResponseDto.class));
+                    response.setSitter(modelMapper.map(booking.getService().getUser(), UserResponseDto.class));
                     return response;
                 })
                 .toList();
     }
 
     @Override
-    public Iterable<ResponseBookingDto> getBookingsAsSitter() {
+    public Iterable<BookingDto> getBookingsAsSitter() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUsername = authentication.getName();
         User user = userRepository.findByEmail(currentUsername)
@@ -152,9 +150,11 @@ public class BookingServiceImpl implements BookingService {
         List<Booking> bookings = bookingRepository.findAllBySitter(user.getId());
         return bookings.stream()
                 .map(booking -> {
-                    ResponseBookingDto response = modelMapper.map(booking, ResponseBookingDto.class);
-                    response.setOwnerId(booking.getPet().getUser().getId());
-                    response.setSitterId(user.getId());
+                    BookingDto response = modelMapper.map(booking, BookingDto.class);
+                    response.setServiceTitle(booking.getService().getTitle());
+                    response.setPetName(booking.getPet().getName());
+                    response.setSitter(modelMapper.map(user, UserResponseDto.class));
+                    response.setOwner(modelMapper.map(booking.getPet().getUser(), UserResponseDto.class));
                     return response;
                 })
                 .toList();

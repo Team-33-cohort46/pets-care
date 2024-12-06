@@ -1,10 +1,6 @@
 package ait.cohort46.booking.service;
 
-import ait.cohort46.booking.dto.CreateBookingDto;
-import ait.cohort46.booking.dto.NewStatusBooking;
-import ait.cohort46.booking.dto.ResponseBookingDto;
-import ait.cohort46.booking.dto.ResponseStatusBookingDto;
-import ait.cohort46.petscare.dto.ResponseServiceDto;
+import ait.cohort46.booking.dto.*;
 
 public interface BookingService {
 
@@ -14,8 +10,8 @@ public interface BookingService {
 
     ResponseBookingDto getBooking(Long bookingId);
 
-    Iterable<ResponseBookingDto> getBookingsAsOwner();
+    Iterable<BookingDto> getBookingsAsOwner();
 
-    Iterable<ResponseBookingDto> getBookingsAsSitter();
+    Iterable<BookingDto> getBookingsAsSitter();
 
 }

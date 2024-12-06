@@ -21,4 +21,6 @@ public interface UserService {
     UserResponseDto getCurrentUser();
 
     List<ReviewDto> getReviews();
+
+    List<ReviewDto> getUsersReviews(String email);
 }

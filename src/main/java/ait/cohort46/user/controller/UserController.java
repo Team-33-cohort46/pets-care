@@ -82,6 +82,11 @@ public class UserController {
         return userService.getReviews();
     }
 
+    @GetMapping("/user/reviews/{email}")
+    public List<ReviewDto> getUsersReviews(@PathVariable String email){
+        return userService.getUsersReviews(email);
+    }
+
 //    @PostMapping("/pet/register/{user_id}")
 //    public PetResponseDto createPet(@PathVariable Long user_id, @RequestBody PetRequestDto petRequestDto) {
 //        return userService.createPet(user_id, petRequestDto);

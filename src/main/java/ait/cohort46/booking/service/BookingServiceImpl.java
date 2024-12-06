@@ -11,6 +11,7 @@ import ait.cohort46.booking.model.Booking;
 import ait.cohort46.pet.dao.PetRepository;
 import ait.cohort46.pet.model.Pet;
 import ait.cohort46.petscare.dao.ServiceRepository;
+import ait.cohort46.petscare.dto.ResponseServiceDto;
 import ait.cohort46.petscare.dto.exception.ServiceNotFoundException;
 import ait.cohort46.user.dao.UserRepository;
 import ait.cohort46.user.dto.exception.UserExistsException;
@@ -25,6 +26,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -43,7 +46,9 @@ public class BookingServiceImpl implements BookingService {
         LocalDate dateStart = createBookingDto.getStartDate();
         LocalDate dateEnd = createBookingDto.getEndDate();
         long daysBetween = ChronoUnit.DAYS.between(dateStart, dateEnd) + 1;
-        if (daysBetween < 1) {throw new BookingInvalidStatusException();}
+        if (daysBetween < 1) {
+            throw new BookingInvalidStatusException();
+        }
 
         //возвращать стоимость бронирования как прайс*дни, добавить стоимость бронирования в модель
         ait.cohort46.petscare.model.Service service = serviceRepository.findById(createBookingDto.getServiceId())
@@ -117,4 +122,41 @@ public class BookingServiceImpl implements BookingService {
         return response;
     }
 
+    @Override
+    public Iterable<ResponseBookingDto> getBookingsAsOwner() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = authentication.getName();
+        User user = userRepository.findByEmail(currentUsername)
+                .orElseThrow(UserExistsException::new);
+
+        // Находим брони, где пользователь является владельцем питомца
+        List<Booking> bookings = bookingRepository.findAllByOwner(user.getId());
+        return bookings.stream()
+                .map(booking -> {
+                    ResponseBookingDto response = modelMapper.map(booking, ResponseBookingDto.class);
+                    response.setOwnerId(user.getId());
+                    response.setSitterId(booking.getService().getUser().getId());
+                    return response;
+                })
+                .toList();
+    }
+
+    @Override
+    public Iterable<ResponseBookingDto> getBookingsAsSitter() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = authentication.getName();
+        User user = userRepository.findByEmail(currentUsername)
+                .orElseThrow(UserExistsException::new);
+
+        // Находим брони, где пользователь является ситтером
+        List<Booking> bookings = bookingRepository.findAllBySitter(user.getId());
+        return bookings.stream()
+                .map(booking -> {
+                    ResponseBookingDto response = modelMapper.map(booking, ResponseBookingDto.class);
+                    response.setOwnerId(booking.getPet().getUser().getId());
+                    response.setSitterId(user.getId());
+                    return response;
+                })
+                .toList();
+    }
 }

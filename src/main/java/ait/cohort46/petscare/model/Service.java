@@ -23,6 +23,7 @@ public class Service implements Serializable {
     @Column(nullable = false)
     private String title;
 
+    @Column(length = 500, nullable = true)
     private String description;
 
     @Column(nullable = false)

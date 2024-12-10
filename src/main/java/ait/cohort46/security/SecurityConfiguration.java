@@ -18,7 +18,7 @@ public class SecurityConfiguration {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable());
         http.authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/auth/login", "/auth/register", "/services_categories", "/auth/register/restore").permitAll()
+                        .requestMatchers("/auth/login", "/auth/register", "/services_categories", "/auth/register/restore", "/auth/user/reviews/{email}").permitAll()
                         .requestMatchers(HttpMethod.GET, "/services").permitAll()
                         .requestMatchers("/admin/**")
                         .access(new WebExpressionAuthorizationManager("authentication.name == 'admin@admin.com'"))

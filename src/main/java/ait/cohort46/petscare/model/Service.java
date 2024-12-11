@@ -33,4 +33,10 @@ public class Service implements Serializable {
 
     @ManyToOne
     private ServiceCategory serviceCategory;
+
+    private boolean isDeleted = false;
+
+    public void setDeleted(Boolean deleted) {
+        isDeleted = deleted;
+    }
 }

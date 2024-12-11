@@ -126,7 +126,9 @@ public class PetsCareServiceImpl implements PetsCareService {
     public ServiceDTO deleteService(Long id) {
         ait.cohort46.petscare.model.Service service = serviceRepository.findById(id)
                 .orElseThrow(ServiceNotFoundException::new);
-        serviceRepository.delete(service);
+        //serviceRepository.delete(service);
+        service.setDeleted(true);
+        serviceRepository.save(service);
         return modelMapper.map(service, ServiceDTO.class);
     }
 

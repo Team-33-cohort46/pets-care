@@ -32,7 +32,7 @@ public class User implements Serializable {
     @Setter
     @Column(unique = true, nullable = false)
     @NotBlank
-//    @Email
+    @Email
     private String email;
 
     @Setter

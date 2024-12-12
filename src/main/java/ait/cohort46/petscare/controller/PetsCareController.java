@@ -59,7 +59,7 @@ public class PetsCareController {
     @GetMapping("/services")
     public Page<ResponseServiceDto> getAllServices(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "100") int size,
             @RequestParam(required = false) Long categoryId) {
         Pageable pageable = PageRequest.of(page, size);
         if (categoryId != null) {

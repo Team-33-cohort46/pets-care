@@ -1,5 +1,8 @@
 package ait.cohort46.adminpanel.service;
 
+import ait.cohort46.pet.dao.PetRepository;
+import ait.cohort46.pet.dto.PetResponseDto;
+import ait.cohort46.pet.model.Pet;
 import ait.cohort46.petscare.dao.ServiceCategoryRepository;
 import ait.cohort46.petscare.dao.ServiceRepository;
 import ait.cohort46.petscare.dto.*;
@@ -30,11 +33,18 @@ public class AdminPanelServiceImpl implements AdminPanelService {
     private final ServiceRepository serviceRepository;
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
+    private final PetRepository petRepository;
 
     @Override
     public Page<UserResponseDto> getAllUsers(Pageable pageable) {
         Page<User> usersPage = userRepository.findAll(pageable);
         return usersPage.map(user -> modelMapper.map(user, UserResponseDto.class));
+    }
+
+    @Override
+    public Page<PetResponseDto> getAllPets(Pageable pageable) {
+        Page<Pet> petsPage = petRepository.findAll(pageable);
+        return petsPage.map(pet -> modelMapper.map(pet, PetResponseDto.class));
     }
 
 

@@ -1,6 +1,7 @@
 package ait.cohort46.adminpanel.controller;
 
 import ait.cohort46.adminpanel.service.AdminPanelService;
+import ait.cohort46.pet.dto.PetResponseDto;
 import ait.cohort46.petscare.dto.*;
 import ait.cohort46.petscare.service.PetsCareService;
 import ait.cohort46.user.dto.UserResponseDto;
@@ -65,11 +66,15 @@ public class AdminController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
-//        if (categoryId != null) {
-//            // Если передан categoryId, возвращаем отфильтрованные данные
-//            return petsCareService.getServicesByCategory(categoryId, pageable);
-//        }
         return adminPanelService.getAllUsers(pageable);
+    }
+
+    @GetMapping("/admin/pets")
+    public Page<PetResponseDto> getAllPets(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return adminPanelService.getAllPets(pageable);
     }
 
 }

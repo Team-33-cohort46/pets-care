@@ -22,7 +22,7 @@ public class BookingController {
     }
 
     @GetMapping("/bookings/{id}")
-    public ResponseBookingDto getBooking(@PathVariable Long id) {
+    public BookingDto getBooking(@PathVariable Long id) {
 
         return bookingService.getBooking(id);
     }

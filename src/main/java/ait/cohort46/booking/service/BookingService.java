@@ -8,7 +8,7 @@ public interface BookingService {
 
     ResponseStatusBookingDto changeStatusBooking(Long id, NewStatusBooking newStatusBooking);
 
-    ResponseBookingDto getBooking(Long bookingId);
+    BookingDto getBooking(Long bookingId);
 
     Iterable<BookingDto> getBookingsAsOwner();
 

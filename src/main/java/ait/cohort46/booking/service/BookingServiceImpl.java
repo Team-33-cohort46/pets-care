@@ -105,16 +105,18 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public ResponseBookingDto getBooking(Long bookingId) {
+    public BookingDto getBooking(Long bookingId) {
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(BookingNotFoundException::new);
         Pet pet = petRepository.findById(booking.getPet().getId())
                 .orElseThrow(() -> new EntityNotFoundException("Pet not found"));
         ait.cohort46.petscare.model.Service service = serviceRepository.findById(booking.getService().getId())
                 .orElseThrow(ServiceNotFoundException::new);
 
-        ResponseBookingDto response = modelMapper.map(booking, ResponseBookingDto.class);
-        response.setOwnerId(pet.getUser().getId());
-        response.setSitterId(service.getUser().getId());
+        BookingDto response = modelMapper.map(booking, BookingDto.class);
+        response.setOwner(modelMapper.map(pet.getUser(), UserResponseDto.class));
+        response.setSitter(modelMapper.map(service.getUser(), UserResponseDto.class));
+        response.setServiceTitle(booking.getService().getTitle());
+        response.setPetName(booking.getPet().getName());
         return response;
     }
 
